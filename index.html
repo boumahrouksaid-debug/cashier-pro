@@ -1,205 +1,58 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>كاشير PRO - نسخة البيع</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#22c55e">
-<meta name="mobile-web-app-capable" content="yes">
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-<style>
-*{box-sizing:border-box;font-family:system-ui}
-body{margin:0;background:#111;color:#fff;padding-bottom:90px}
-.top{background:#000;text-align:center;padding:12px}
-.top b{color:#22c55e;font-size:22px}
-.top div{font-size:12px;color:#aaa}
-.alert-banner{background:#dc2626;color:#fff;text-align:center;padding:10px;font-weight:700;display:none;cursor:pointer}
-.tabs{display:flex;gap:6px;padding:8px;overflow:auto}
-.tabs button{white-space:nowrap;padding:11px 14px;border:0;border-radius:12px;font-weight:700;background:#222;color:#fff;cursor:pointer}
-.tabs button.on{background:#22c55e;color:#000}
-.card{background:#1e1e1e;margin:10px;border-radius:14px;padding:12px}
-input,select{width:100%;padding:12px;border:0;border-radius:10px;background:#333;color:#fff;font-size:15px;margin:4px 0}
-input[type=date]{color-scheme:dark}
-.row{display:flex;gap:8px}
-.row button{flex:1;padding:12px;border:0;border-radius:10px;font-weight:700;cursor:pointer}
-.btn-green{background:#22c55e;color:#000}
-.btn-blue{background:#2563eb;color:#fff}
-.btn-orange{background:#f59e0b;color:#000}
-.btn-red{background:#ef4444;color:#fff}
-.item{display:flex;justify-content:space-between;align-items:center;background:#2a2a2a;padding:10px;border-radius:10px;margin:6px 0}
-.total{font-size:24px;font-weight:800;text-align:center;padding:10px}
-.hidden{display:none}
-.badge{background:#f59e0b;color:#000;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:700}
-.badge-red{background:#ef4444;color:#fff;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:700}
-.badge-green{background:#22c55e;color:#000;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:700}
-#reader,#reader2,#readerCust{width:100%;display:none;margin-top:8px;border-radius:10px;overflow:hidden}
-.cust-card{background:#fff;color:#000;border-radius:12px;padding:12px;text-align:center;margin:6px 0}
-.cust-card svg{width:100%;max-width:220px}
-#receipt{display:none}
-.print-cust{display:none}
-#lockScreen{position:fixed;inset:0;background:#111;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
-#lockScreen input{text-align:center;letter-spacing:3px;font-size:20px;font-weight:800}
-#installBar{display:none;background:#22c55e;color:#000;text-align:center;padding:10px;font-weight:700;cursor:pointer}
-@media print{body{background:#fff;color:#000;padding:0}body *{visibility:hidden}#receipt,#receipt *{visibility:visible}#receipt{display:block;position:absolute;top:0;left:0;width:58mm;padding:4mm;font-family:monospace;color:#000;background:#fff;text-align:center}#receipt .r-line{border-top:1px dashed #000;margin:6px 0}#receipt table{width:100%;font-size:12px;border-collapse:collapse;text-align:right}#receipt td{padding:2px 0}}
-</style>
+<head><meta charset="UTF-8"><title>تحميل مشروع Hanout V2</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>body{font-family:Tahoma;text-align:center;padding:30px} button{padding:15px 30px;background:#1a3a5f;color:#fff;border:none;border-radius:10px;font-size:18px;cursor:pointer}</style>
 </head>
 <body>
-
-<!-- شاشة القفل - كود التفعيل -->
-<div id="lockScreen">
-<div style="font-size:50px">🛒</div>
-<h1 style="color:#22c55e">كاشير PRO</h1>
-<p>نسخة تجريبية 7 أيام مجانا<br>بعدها فعل النسخة الكاملة</p>
-<input id="shopNameInput" placeholder="اسم المحل - مثلا: محل الأمل">
-<input id="phoneInput" placeholder="رقم هاتفك">
-<input id="activationInput" placeholder="كود التفعيل - جرب DEMO7">
-<button class="btn-green" style="width:100%;padding:14px;border:0;border-radius:10px;font-size:17px;margin-top:8px" onclick="activate()">✅ فعل و ابدأ البيع</button>
-<p style="font-size:12px;color:#aaa">للشراء اتصل: <b style="color:#fff">0698025842</b><br>السعر: 5000 دج مرة واحدة / 1000 دج شهريا<br>كود التجربة: <b style="color:#22c55e">DEMO7</b></p>
-<div id="trialInfo" style="color:#f59e0b;font-weight:700"></div>
-</div>
-
-<div id="installBar" onclick="installApp()">📱 اضغط هنا باش تثبت التطبيق في تيليفونك</div>
-<div class="top"><b>🛒 <span id="shopTitle">كاشير PRO</span></b><div id="shopSub">0698025842 | DEMO7</div></div>
-<div id="alertBanner" class="alert-banner" onclick="showTab(3)"></div>
-<div class="tabs">
-<button id="t1" class="on" onclick="showTab(1)">🛒 بيع</button>
-<button id="t2" onclick="showTab(2)">📦 السلع</button>
-<button id="t3" onclick="showTab(3)">📊 السطوك + إنذار</button>
-<button id="t4" onclick="showTab(4)">👥 الزبائن - كريدي</button>
-<button id="t5" onclick="showTab(5)">➕ إضافات</button>
-<button id="t6" onclick="showTab(6)">📈 المبيعات</button>
-<button onclick="showTab(7)">⚙️ إعدادات</button>
-</div>
-
-<div id="tab1">
-<div class="card"><input id="searchProd" oninput="filterProd()" placeholder="🔍 بحث... اكتب اسم السلعة"><div id="quickBtns" style="display:flex;gap:6px;overflow:auto;margin-top:6px"></div></div>
-<div class="card"><b>👤 زبون الكريدي</b><div id="selectedCust" style="background:#2563eb;padding:10px;border-radius:10px;text-align:center;font-weight:700">زبون عادي</div><input id="custScanInput" placeholder="سكاني كودبار الزبون..."><div id="readerCust"></div><div class="row"><button class="btn-blue" onclick="scanCustByInput()">🔍 جبد الزبون</button><button class="btn-blue" onclick="toggleCamCust()">📷 سكاني كارت الزبون</button></div><div class="row" style="margin-top:6px"><button class="btn-orange" onclick="clearCust()">❌ زبون عادي</button><button class="btn-green" onclick="payDebt()">💰 خلص دين</button></div></div>
-<div class="card"><input id="scanInput" placeholder="سكاني كود السلعة..."><div id="reader"></div><div class="row"><button class="btn-green" onclick="addByScan()">✅ إضافة</button><button class="btn-blue" onclick="toggleCam()">📷 كاميرا البيع</button></div></div>
-<div class="card"><div id="prodList"></div></div>
-<div class="card"><b>🧾 السلة</b><div id="cartList"></div><div class="total">المجموع: <span id="total">0</span> دج</div><select id="payType"><option value="كاش">💵 كاش</option><option value="كريدي">📓 كريدي</option></select><input id="paidInput" type="number" placeholder="شحال خلص الزبون؟"><div style="text-align:center;font-weight:700" id="changeText"></div><div class="row"><button class="btn-green" onclick="checkout()">💰 خلص</button><button class="btn-orange" onclick="clearCart()">🗑️ مسح</button></div><div class="row" style="margin-top:8px"><button class="btn-blue" onclick="printLast()">🖨️ طباعة</button><button class="btn-blue" style="background:#111;border:1px solid #555;color:#fff" onclick="testPrint()">🧪 تجربة</button></div></div>
-</div>
-<div id="tab2" class="hidden"><div class="card"><input id="pName" placeholder="اسم السلعة"><input id="pBarcode" placeholder="كودبار"><div id="reader2"></div><button class="btn-blue" style="width:100%;padding:12px;border:0;border-radius:10px;margin:4px 0" onclick="toggleCam2()">📷 سكاني الكودبار</button><input id="pPrice" type="number" placeholder="السعر"><input id="pStock" type="number" placeholder="الكمية"><input id="pMin" type="number" placeholder="إنذار السطوك - مثلا 5"><input id="pCat" placeholder="الفئة"><label style="font-size:13px;color:#aaa">📅 تاريخ الانتهاء:</label><input id="pExpiry" type="date"><button class="btn-green" style="width:100%;padding:12px;border:0;border-radius:10px" onclick="addProd()">+ زيد السلعة</button></div><div class="card"><div id="allProds"></div></div></div>
-<div id="tab3" class="hidden"><div class="card" style="background:#7f1d1d"><b>🚨 الإنذارات</b><div id="alertList"></div></div><div class="card"><b>📊 السطوك</b><div id="stockList"></div></div><div class="card"><b>📅 تواريخ الانتهاء</b><div id="expiryList"></div></div><div class="card"><select id="stockSelect"></select><input id="stockQty" type="number" placeholder="شحال تزيد؟"><button class="btn-green" style="width:100%;padding:12px;border:0;border-radius:10px" onclick="addStock()">زيد للمخزون ✅</button></div></div>
-<div id="tab4" class="hidden"><div class="card"><input id="cName" placeholder="اسم الزبون"><input id="cPhone" placeholder="تيليفون"><input id="cDebt" type="number" placeholder="الدين - 0"><button class="btn-green" style="width:100%;padding:12px;border:0;border-radius:10px" onclick="addCust()">+ زيد زبون + كودبار</button></div><div class="card"><div id="custList"></div></div></div>
-<div id="tab5" class="hidden"><div class="card"><input id="eName" placeholder="الإضافة"><input id="eAmount" type="number" placeholder="المبلغ"><select id="eType"><option value="مصروف">مصروف ❌</option><option value="مدخول">مدخول ✅</option></select><button class="btn-orange" style="width:100%;padding:12px;border:0;border-radius:10px" onclick="addExtra()">+ زيد الإضافة</button></div><div class="card"><div id="extraList"></div><div class="total">صافي: <span id="extraTotal">0</span> دج</div></div></div>
-<div id="tab6" class="hidden"><div class="card"><div id="salesList"></div><div class="total">مجموع اليوم: <span id="dayTotal">0</span> دج</div><button class="btn-red" style="width:100%;padding:12px;border:0;border-radius:10px" onclick="clearSales()">مسح المبيعات</button></div></div>
-<div id="tab7" class="hidden"><div class="card"><b>⚙️ إعدادات المحل</b><input id="setShop" placeholder="اسم المحل"><input id="setPhone" placeholder="رقم الهاتف"><input id="setAddr" placeholder="العنوان"><button class="btn-green" style="width:100%;padding:12px;border:0;border-radius:10px" onclick="saveSettings()">💾 حفظ الإعدادات</button><button class="btn-blue" style="width:100%;padding:12px;border:0;border-radius:10px;margin-top:8px" onclick="installApp()">📱 تثبيت التطبيق</button><div style="text-align:center;color:#aaa;font-size:12px;margin-top:10px">كاشير PRO - صنع في الجزائر 🇩🇿<br>للدعم: 0698025842</div></div></div>
-
-<div id="receipt"><div style="font-size:18px;font-weight:900" id="rShop">🛒 كاشير PRO</div><div id="rPhone">0698025842</div><div id="rDate" style="font-size:11px"></div><div id="rCust" style="font-size:12px"></div><div id="rPayType" style="font-size:12px;font-weight:700"></div><div class="r-line"></div><table><tbody id="rItems"></tbody></table><div class="r-line"></div><div style="display:flex;justify-content:space-between;font-weight:900;font-size:16px"><span>المجموع:</span><span id="rTotal"></span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span>خلص:</span><span id="rPaid"></span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span>الباقي:</span><span id="rChange"></span></div><div class="r-line"></div><div style="font-size:12px">شكرا ❤️</div></div>
-<div id="printCustCard" class="print-cust"></div>
-
+<h2>📦 مشروع حانوت V2 - جاهز للتحميل</h2>
+<p>اضغط لتحميل كل الملفات منظمة في ZIP</p>
+<button onclick="downloadZip()">📥 حمّل المشروع ZIP</button>
 <script>
-// ===== نظام التفعيل - البيع =====
-let CODES={
-'DEMO7':{days:7,type:'تجريبي'},
-'PRO-2026-001':{days:365,type:'سنوي'},
-'PRO-2026-002':{days:365,type:'سنوي'},
-'MONTH-001':{days:30,type:'شهري'},
-'VIP-9999':{days:9999,type:'دائم'}
-};
-// تقدر تزيد أكواد جدد هنا لكل زبون تشري عليه!
-let license=JSON.parse(localStorage.getItem('license')||'null');
-function checkLicense(){
-if(!license)return false;
-let now=Date.now();
-if(now>license.expire){localStorage.removeItem('license');return false;}
-let left=Math.ceil((license.expire-now)/86400000);
-document.getElementById('trialInfo').innerText='باقي '+left+' يوم - '+license.type;
-return true;
+async function downloadZip(){
+ const zip = new JSZip();
+ zip.file("index.html", document.getElementById('f_index').textContent);
+ zip.file("manifest.json", document.getElementById('f_manifest').textContent);
+ zip.file("sw.js", document.getElementById('f_sw').textContent);
+ zip.file("css/style.css", document.getElementById('f_css').textContent);
+ zip.file("js/db.js", document.getElementById('f_db').textContent);
+ zip.file("js/app.js", document.getElementById('f_app').textContent);
+ zip.file("js/scanner.js", document.getElementById('f_scanner').textContent);
+ zip.file("js/printer.js", document.getElementById('f_printer').textContent);
+ zip.file("README.txt", "كيفاش تخدم:\n1- فك الضغط\n2- افتح المجلد في VS Code\n3- شغل Live Server\n4- ثبت التطبيق من Chrome -> تثبيت التطبيق");
+ const blob = await zip.generateAsync({type:"blob"});
+ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hanout-v2.zip'; a.click();
 }
-function activate(){
-let code=document.getElementById('activationInput').value.trim().toUpperCase();
-let shop=document.getElementById('shopNameInput').value.trim()||'محلي';
-let phone=document.getElementById('phoneInput').value.trim()||'0698025842';
-if(!CODES[code])return alert('الكود غالط! اتصل بـ 0698025842 باش تشري كود');
-let days=CODES[code].days;
-license={code:code,expire:Date.now()+days*86400000,type:CODES[code].type,shop:shop,phone:phone};
-localStorage.setItem('license',JSON.stringify(license));
-localStorage.setItem('shopName',shop);localStorage.setItem('shopPhone',phone);
-document.getElementById('lockScreen').style.display='none';
-applyShop();alert('مبروك! تم التفعيل ✅ '+CODES[code].type+' - '+days+' يوم');
-}
-function applyShop(){let s=localStorage.getItem('shopName')||'كاشير PRO';let p=localStorage.getItem('shopPhone')||'0698025842';document.getElementById('shopTitle').innerText=s;document.getElementById('shopSub').innerText=p+' | كاشير PRO';document.getElementById('rShop').innerText='🛒 '+s;document.getElementById('rPhone').innerText=p;}
-if(checkLicense()){document.getElementById('lockScreen').style.display='none';applyShop();}else{document.getElementById('lockScreen').style.display='flex';}
-// ===== PWA Install =====
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBar').style.display='block';});
-function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('installBar').style.display='none';});}else{alert('في Chrome اضغط ⋮ ثم Add to Home Screen / تثبيت التطبيق');}}
-// ===== الكاشير =====
-let prods=JSON.parse(localStorage.getItem('prods')||'[]');
-if(!prods.length){prods=[{name:'حليب',barcode:'6135873000384',price:50,stock:3,cat:'حليب',min:5,expiry:'2026-11-25'},{name:'خبز',barcode:'6130000000001',price:10,stock:50,cat:'خبز',min:10,expiry:'2026-11-16'},{name:'بيض',barcode:'6130000000002',price:20,stock:30,cat:'بيض',min:5,expiry:'2026-12-15'},{name:'ماء',barcode:'6130000000003',price:40,stock:20,cat:'مشروبات',min:5,expiry:'2027-06-01'}];save('prods',prods);}
-let cart=JSON.parse(localStorage.getItem('cart')||'[]');let sales=JSON.parse(localStorage.getItem('sales')||'[]');let custs=JSON.parse(localStorage.getItem('custs')||'[]');
-if(!custs.length){custs=[{name:'محمد - كريدي',phone:'0698025842',debt:5000,barcode:'2000001'}];save('custs',custs);}
-let extras=JSON.parse(localStorage.getItem('extras')||'[]');let lastSale=null,selectedCustIndex=-1;
-function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
-function saveSettings(){let s=document.getElementById('setShop').value.trim();let p=document.getElementById('setPhone').value.trim();if(s)localStorage.setItem('shopName',s);if(p)localStorage.setItem('shopPhone',p);applyShop();alert('تم الحفظ ✅');}
-function genCustBarcode(){let n=2000000+custs.length+1;while(custs.find(c=>c.barcode==String(n)))n++;return String(n);}
-function daysLeft(exp){if(!exp)return null;let t=new Date();t.setHours(0,0,0,0);let d=new Date(exp);d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
-function expiryBadge(p){let d=daysLeft(p.expiry);if(d===null)return '<span class="badge">بدون تاريخ</span>';if(d<0)return '<span class="badge-red">⛔ ماتت!</span>';if(d==0)return '<span class="badge-red">⛔ تموت اليوم!</span>';if(d<=7)return '<span class="badge-red">⚠️ '+d+' أيام!</span>';if(d<=30)return '<span class="badge">⚠️ '+d+' يوم</span>';return '<span class="badge-green">✅ '+d+' يوم</span>';}
-function stockBadge(p){let min=p.min||5;if(p.stock==0)return '<span class="badge-red">⛔ خلاصت!</span>';if(p.stock<=min)return '<span class="badge-red">🚨 باقي '+p.stock+'</span>';return '<span class="badge-green">مخزون '+p.stock+'</span>';}
-function showTab(n){[1,2,3,4,5,6,7].forEach(i=>{let el=document.getElementById('tab'+i);if(el)el.classList.toggle('hidden',i!==n);});setTimeout(drawBarcodes,100);}
-function drawBarcodes(){custs.forEach((c,i)=>{let el=document.getElementById('bc-'+i);if(el){try{JsBarcode(el,c.barcode,{format:'CODE128',width:1.5,height:45,displayValue:true,fontSize:13,margin:4});}catch(e){}}});}
-let searchQ='';
-function filterProd(){searchQ=document.getElementById('searchProd').value.trim();let items=document.querySelectorAll('#prodList .item');items.forEach(el=>{el.style.display=!searchQ||el.innerText.includes(searchQ)?'flex':'none';});}
-setInterval(()=>{let q=document.getElementById('quickBtns');if(q&&!q.children.length&&prods.length){prods.forEach((p,i)=>{let b=document.createElement('button');b.textContent=p.name;b.onclick=()=>addToCart(i);b.style.cssText='padding:10px 14px;border:0;border-radius:20px;font-weight:800;background:#333;color:#fff;white-space:nowrap';q.appendChild(b);});}},600);
-function editProd(i){let p=prods[i];let np=prompt('السعر الجديد - دج',p.price);if(np==null)return;let nq=prompt('الكمية الجديدة',p.qty??p.stock??p.quantity??'');if(nq==null)return;let oldExp=p.exp||p.expiry||p.expDate||p.date||'';let ne=prompt('تاريخ الانتهاء الجديد - اكتب هكذا: 2026-12-31',oldExp);if(ne==null)return;p.price=parseFloat(np)||p.price;if(p.qty!==undefined)p.qty=parseFloat(nq);if(p.stock!==undefined)p.stock=parseFloat(nq);if(p.quantity!==undefined)p.quantity=parseFloat(nq);if(ne){p.exp=ne;p.expiry=ne;p.expDate=ne;p.date=ne;}save('prods',prods);render();alert('تم التعديل ✅ - سعر + كمية + تاريخ');}
-setInterval(()=>{let list=document.getElementById('allProds');if(!list)return;[...list.children].forEach((card,idx)=>{if(card.querySelector('.editBtn'))return;let btns=[...card.querySelectorAll('button')];let del=btns.find(b=>b.textContent.includes('حذف'));if(!del)return;let eb=document.createElement('button');eb.className='editBtn';eb.textContent='تعديل ✏️';eb.style.cssText='padding:10px 12px;border:0;border-radius:10px;background:#ffaa00;color:#000;font-weight:800;margin-left:5px';eb.onclick=()=>editProd(idx);del.parentNode.insertBefore(eb,del);});},600);
-  let st=document.createElement('style');st.innerHTML='.editBtn{padding:5px 7px!important;font-size:11px!important;border-radius:8px!important}';document.head.appendChild(st);
-let ts=document.createElement('script');ts.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';document.head.appendChild(ts);
-setInterval(()=>{let dateInput=document.querySelector('input[type="date"]');if(!dateInput||document.getElementById('camBtn'))return;let b=document.createElement('button');b.id='camBtn';b.type='button';b.textContent='📷 صور التاريخ بالكاميرا';b.style.cssText='width:100%;padding:10px;border:0;border-radius:10px;background:#00c853;color:#fff;font-weight:700;margin-top:6px;font-size:14px';let f=document.createElement('input');f.type='file';f.accept='image/*';f.capture='environment';f.style.display='none';b.onclick=()=>f.click();f.onchange=async()=>{if(!f.files[0])return;b.textContent='⏳ نقرا في التاريخ...';try{let r=await Tesseract.recognize(f.files[0],'eng+ara');let txt=r.data.text;let m=txt.match(/(\d{1,2})[\/\-\. ](\d{1,2})[\/\-\. ](\d{2,4})/)||txt.match(/(\d{4})[\/\-\. ](\d{1,2})[\/\-\. ](\d{1,2})/);if(m){let d,mn,y;if(m[1].length===4){y=m[1];mn=m[2];d=m[3];}else{d=m[1];mn=m[2];y=m[3];if(y.length===2)y='20'+y;}let iso=y+'-'+String(mn).padStart(2,'0')+'-'+String(d).padStart(2,'0');dateInput.value=iso;dateInput.dispatchEvent(new Event('input',{bubbles:true}));dateInput.dispatchEvent(new Event('change',{bubbles:true}));alert('لقيت التاريخ: '+iso+' ✅');}else{alert('ما لقيتش تاريخ واضح - صور من قريب و الضو مليح 📷');}}catch(e){alert('صرا مشكل - عاود صور');}b.textContent='📷 صور التاريخ بالكاميرا';};dateInput.parentNode.insertBefore(b,dateInput.nextSibling);dateInput.parentNode.insertBefore(f,dateInput.nextSibling);},800);
-if(!m)m=txt.match(/(\d{1,2})[\/\- ](\d{4})/);
-setInterval(()=>{document.querySelectorAll('.editBtn').forEach(b=>b.textContent='تعديل')},500);
-function render(){
-let h='';prods.forEach((p,i)=>{let exp=daysLeft(p.expiry)!==null&&daysLeft(p.expiry)<0;h+=`<div class="item" style="${exp?'border:2px solid #ef4444':''}"><div><b>${p.name} ${exp?'⛔':''}</b><br><span>${p.price} دج | ${stockBadge(p)} | ${expiryBadge(p)}</span></div><button class="btn-green" style="padding:8px 14px;border:0;border-radius:8px" ${exp?'disabled style="background:#555;padding:8px 14px;border:0;border-radius:8px"':''} onclick="addToCart(${i})">+ أضف</button></div>`;});
-document.getElementById('prodList').innerHTML=h;
-let h2='';prods.forEach((p,i)=>{h2+=`<div class="item"><div><b>${p.name}</b><br><span>${p.price} دج | ${p.expiry||'---'} | ${expiryBadge(p)}</span></div><button class="btn-red" style="padding:8px;border:0;border-radius:8px" onclick="delProd(${i})">حذف</button></div>`;});
-document.getElementById('allProds').innerHTML=h2;
-let alerts=[];prods.forEach(p=>{let d=daysLeft(p.expiry);if(p.stock<=(p.min||5))alerts.push(`🚨 <b>${p.name}</b> راح يخلاص! باقي ${p.stock}`);if(d!==null&&d<0)alerts.push(`⛔ <b>${p.name}</b> ماتت!`);else if(d!==null&&d<=30)alerts.push(`⚠️ <b>${p.name}</b> تموت في ${d} يوم`);});
-let banner=document.getElementById('alertBanner');if(alerts.length){banner.style.display='block';banner.innerHTML='🚨 عندك '+alerts.length+' إنذار! اضغط هنا';}else{banner.style.display='none';}
-document.getElementById('alertList').innerHTML=alerts.length?alerts.map(a=>`<div style="padding:8px;background:#00000033;border-radius:8px;margin:5px 0">${a}</div>`).join(''):'✅ لا إنذارات';
-let sh='';prods.forEach(p=>{sh+=`<div class="item"><div><b>${p.name}</b></div><div>${stockBadge(p)}</div></div>`;});document.getElementById('stockList').innerHTML=sh;
-let ex='';let sorted=[...prods].sort((a,b)=>{let da=daysLeft(a.expiry);let db=daysLeft(b.expiry);if(da===null)return 1;if(db===null)return -1;return da-db;});sorted.forEach(p=>{ex+=`<div class="item"><div><b>${p.name}</b><br><span>${p.expiry||'---'}</span></div><div>${expiryBadge(p)}</div></div>`;});document.getElementById('expiryList').innerHTML=ex;
-document.getElementById('stockSelect').innerHTML=prods.map((p,i)=>`<option value="${i}">${p.name} - ${p.stock}</option>`).join('');
-let ch='';let tot=0;cart.forEach((c,i)=>{tot+=c.price*c.qty;ch+=`<div class="item"><div><b>${c.name}</b><br><span>${c.price} دج</span></div><div class="qty"><button onclick="chgQty(${i},-1)">-</button><b>${c.qty}</b><button onclick="chgQty(${i},1)">+</button><button class="btn-red" onclick="delCart(${i})">x</button></div></div>`;});document.getElementById('cartList').innerHTML=ch||'السلة فارغة';document.getElementById('total').innerText=tot;
-let cu='';custs.forEach((c,i)=>{let db=c.debt>0?`<span class="badge-red">يسال ${c.debt} دج</span>`:`<span class="badge">ماعندوش دين ✅</span>`;cu+=`<div class="cust-card"><b style="font-size:18px">${c.name}</b><br><span>${c.phone} - ${db}</span><br><svg id="bc-${i}"></svg><div style="font-size:12px;color:#666">كود: ${c.barcode}</div><div class="row" style="margin-top:8px"><button class="btn-blue" onclick="selectCust(${i})">✅ اختار</button><button class="btn-orange" onclick="printCustCard(${i})">🖨️ طباعة الكارت</button></div><div class="row" style="margin-top:6px"><button class="btn-green" onclick="payDebtOne(${i})">💰 خلص دين</button><button class="btn-red" onclick="delCust(${i})">حذف</button></div></div>`;});document.getElementById('custList').innerHTML=cu||'لا زبائن';
-let ex2='';let et=0;extras.forEach(e=>{et+=e.type=='مدخول'?e.amount:-e.amount;ex2+=`<div class="item"><div><b>${e.name}</b><br><span>${e.type} - ${e.date}</span></div><b>${e.type=='مدخول'?'+':'-'}${e.amount} دج</b></div>`;});document.getElementById('extraList').innerHTML=ex2||'لا إضافات';document.getElementById('extraTotal').innerText=et;
-let sl='';let dt=0;sales.forEach(s=>{dt+=s.total;sl+=`<div class="item"><div><b>${s.cust||'زبون عادي'} - ${s.payType||''}</b><br><span>${s.date} - ${s.items}</span></div><b>${s.total} دج</b></div>`;});document.getElementById('salesList').innerHTML=sl||'لا مبيعات';document.getElementById('dayTotal').innerText=dt;
-let paid=+document.getElementById('paidInput').value||0;document.getElementById('changeText').innerText=paid>0?'الباقي: '+(paid-tot)+' دج':'';
-if(selectedCustIndex>=0){let c=custs[selectedCustIndex];document.getElementById('selectedCust').innerHTML=`👤 ${c.name} - يسال: ${c.debt} دج`;document.getElementById('selectedCust').style.background='#dc2626';}else{document.getElementById('selectedCust').innerHTML='زبون عادي';document.getElementById('selectedCust').style.background='#2563eb';}
-drawBarcodes();
-}
-document.getElementById('paidInput').addEventListener('input',render);
-function selectCust(i){selectedCustIndex=i;showTab(1);render();alert('تم اختيار '+custs[i].name);}
-function clearCust(){selectedCustIndex=-1;render();}
-function scanCustByInput(){let code=document.getElementById('custScanInput').value.trim();let idx=custs.findIndex(c=>String(c.barcode)==code);if(idx<0)return alert('الزبون ماشي موجود');selectedCustIndex=idx;document.getElementById('payType').value='كريدي';render();alert('مرحبا '+custs[idx].name+' يسال: '+custs[idx].debt+' دج');document.getElementById('custScanInput').value='';}
-function payDebt(){if(selectedCustIndex<0)return alert('اختار زبون');payDebtOne(selectedCustIndex);}
-function payDebtOne(i){let c=custs[i];if(c.debt<=0)return alert('ماعندوش دين');let m=+prompt(c.name+' يسال '+c.debt+' دج - شحال يخلص؟',c.debt);if(!m||m<=0)return;c.debt-=m;if(c.debt<0)c.debt=0;save('custs',custs);render();alert('بقا يسال '+c.debt+' دج');}
-function printCustCard(i){let c=custs[i];let div=document.getElementById('printCustCard');div.innerHTML=`<div style="font-size:18px;font-weight:900">🛒 ${localStorage.getItem('shopName')||'كاشير PRO'}</div><div>${c.name}</div><div>${c.phone}</div><div>الدين: ${c.debt} دج</div><svg id="printBC"></svg><div>كود: ${c.barcode}</div>`;try{JsBarcode("#printBC",c.barcode,{format:'CODE128',width:1.8,height:50,displayValue:true});}catch(e){}setTimeout(()=>{window.print();},300);}
-function addToCart(i){let p=prods[i];if(daysLeft(p.expiry)!==null&&daysLeft(p.expiry)<0)return alert('⛔ هاذ السلعة ماتت!');let f=cart.find(c=>c.name==p.name);if(f)f.qty++;else cart.push({name:p.name,price:p.price,qty:1});save('cart',cart);render();}
-function chgQty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);save('cart',cart);render();}
-function delCart(i){cart.splice(i,1);save('cart',cart);render();}
-function clearCart(){cart=[];save('cart',cart);render();}
-function checkout(){if(!cart.length)return alert('السلة فارغة');let tot=cart.reduce((a,c)=>a+c.price*c.qty,0);let payType=document.getElementById('payType').value;let cn=selectedCustIndex>=0?custs[selectedCustIndex].name:'زبون عادي';let paid=+document.getElementById('paidInput').value||0;if(payType=='كريدي'){if(selectedCustIndex<0)return alert('اختار زبون الكريدي!');custs[selectedCustIndex].debt+=tot;paid=0;}else{paid=paid||tot;}let change=paid-tot;lastSale={items:[...cart],total:tot,paid:paid,change:change,cust:cn,payType:payType,date:new Date().toLocaleString('ar-DZ')};sales.push({date:lastSale.date,items:cart.map(c=>c.name+' x'+c.qty).join(' , '),total:tot,cust:cn,payType:payType});cart.forEach(c=>{let p=prods.find(x=>x.name==c.name);if(p)p.stock-=c.qty;});cart=[];document.getElementById('paidInput').value='';save('prods',prods);save('cart',cart);save('sales',sales);save('custs',custs);render();if(confirm('تم البيع ✅ '+tot+' دج\nتطبع الفاتورة؟')){doPrint();}}
-function doPrint(){if(!lastSale)return alert('لا توجد فاتورة');document.getElementById('rDate').innerText=lastSale.date;document.getElementById('rCust').innerText='الزبون: '+lastSale.cust;document.getElementById('rPayType').innerText='الدفع: '+lastSale.payType;document.getElementById('rItems').innerHTML=lastSale.items.map(c=>`<tr><td>${c.name} x${c.qty}</td><td>${c.price*c.qty} دج</td></tr>`).join('');document.getElementById('rTotal').innerText=lastSale.total+' دج';document.getElementById('rPaid').innerText=lastSale.paid+' دج';document.getElementById('rChange').innerText=lastSale.change+' دج';document.getElementById('printCustCard').innerHTML='';setTimeout(()=>window.print(),200);}
-function printLast(){doPrint();}
-function testPrint(){lastSale={items:[{name:'حليب',qty:1,price:50}],total:50,paid:100,change:50,cust:'زبون عادي',payType:'كاش',date:new Date().toLocaleString('ar-DZ')};doPrint();}
-function addProd(){let n=document.getElementById('pName').value.trim();let b=document.getElementById('pBarcode').value.trim();let pr=+document.getElementById('pPrice').value;let st=+document.getElementById('pStock').value||0;let mn=+document.getElementById('pMin').value||5;let ca=document.getElementById('pCat').value;let ex=document.getElementById('pExpiry').value;if(!n||!pr)return alert('اكتب الاسم و السعر');prods.push({name:n,barcode:b,price:pr,stock:st,min:mn,cat:ca,expiry:ex});save('prods',prods);render();alert('تمت ✅');}
-function delProd(i){if(confirm('تحذف؟')){prods.splice(i,1);save('prods',prods);render();}}
-function addStock(){let i=+document.getElementById('stockSelect').value;let q=+document.getElementById('stockQty').value;if(!q)return alert('اكتب شحال تزيد');prods[i].stock+=q;save('prods',prods);render();alert('زدنا '+q+' ✅');}
-function addCust(){let n=document.getElementById('cName').value.trim();let ph=document.getElementById('cPhone').value.trim();let d=+document.getElementById('cDebt').value||0;if(!n)return alert('اكتب اسم الزبون');let bc=genCustBarcode();custs.push({name:n,phone:ph,debt:d,barcode:bc});save('custs',custs);render();alert('تم ✅ '+n+' - كود: '+bc);}
-function delCust(i){if(confirm('تحذف الزبون؟')){custs.splice(i,1);save('custs',custs);render();}}
-function addExtra(){let n=document.getElementById('eName').value.trim();let a=+document.getElementById('eAmount').value;let t=document.getElementById('eType').value;if(!n||!a)return alert('اكتب الاسم و المبلغ');extras.push({name:n,amount:a,type:t,date:new Date().toLocaleDateString('ar-DZ')});save('extras',extras);render();alert('تمت ✅');}
-function addByScan(){let code=document.getElementById('scanInput').value.trim();let p=prods.find(x=>String(x.barcode)==code||x.name==code);if(!p)return alert('ماشي موجود');addToCart(prods.indexOf(p));document.getElementById('scanInput').value='';}
-function clearSales(){if(confirm('تمسح المبيعات؟')){sales=[];save('sales',sales);render();}}
-let html5Qr=null,camOn=false,html5Qr2=null,camOn2=false,html5QrC=null,camOnC=false;
-async function toggleCam(){let el=document.getElementById('reader');if(camOn){try{await html5Qr.stop();}catch(e){}el.style.display='none';camOn=false;return;}el.style.display='block';html5Qr=new Html5Qrcode("reader");try{await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:{width:280,height:120}},(decoded)=>{document.getElementById('scanInput').value=decoded;let p=prods.find(x=>String(x.barcode)==decoded);if(p)addToCart(prods.indexOf(p));html5Qr.stop();el.style.display='none';camOn=false;},(err)=>{});camOn=true;}catch(e){alert('اسمح للكاميرا');el.style.display='none';}}
-async function toggleCam2(){let el=document.getElementById('reader2');if(camOn2){try{await html5Qr2.stop();}catch(e){}el.style.display='none';camOn2=false;return;}el.style.display='block';html5Qr2=new Html5Qrcode("reader2");try{await html5Qr2.start({facingMode:"environment"},{fps:10,qrbox:{width:280,height:120}},(decoded)=>{document.getElementById('pBarcode').value=decoded;alert('الكود: '+decoded);html5Qr2.stop();el.style.display='none';camOn2=false;},(err)=>{});camOn2=true;}catch(e){alert('اسمح للكاميرا');el.style.display='none';}}
-async function toggleCamCust(){let el=document.getElementById('readerCust');if(camOnC){try{await html5QrC.stop();}catch(e){}el.style.display='none';camOnC=false;return;}el.style.display='block';html5QrC=new Html5Qrcode("readerCust");try{await html5QrC.start({facingMode:"environment"},{fps:10,qrbox:{width:280,height:120}},(decoded)=>{document.getElementById('custScanInput').value=decoded;let idx=custs.findIndex(c=>String(c.barcode)==decoded);if(idx>=0){selectedCustIndex=idx;document.getElementById('payType').value='كريدي';render();alert('مرحبا '+custs[idx].name);}html5QrC.stop();el.style.display='none';camOnC=false;},(err)=>{});camOnC=true;}catch(e){alert('اسمح للكاميرا');el.style.display='none';}}
-render();applyShop();
-setInterval(()=>{let v=document.getElementById('liveV');if(v){v.muted=true;v.play().catch(()=>{});}},500); 
+
+// الملفات
 </script>
+
+<!-- الملفات مخبية هنا -->
+<script id="f_index" type="text/plain"><!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#1a3a5f"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="css/style.css"><title>Hanout V2</title></head><body><div class="header">📦 حانوت V2 - نظام احترافي قابل للتطوير</div><div class="card"><h3>نظام المحاسبة V2</h3><p>هذا المشروع منظم باش تطورو لاحقا</p><button class="btn btn-p" onclick="location.reload()">تحديث</button></div><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"><\/script><script type="module" src="js/app.js"><\/script></body></html></script>
+<script id="f_manifest" type="text/plain">{"name":"Hanout V2","short_name":"Hanout","start_url":"index.html","display":"standalone","background_color":"#1a3a5f","theme_color":"#1a3a5f","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/263/263142.png","sizes":"192x192","type":"image/png"}]}</script>
+<script id="f_sw" type="text/plain">self.addEventListener('install',e=>{e.waitUntil(caches.open('hanout-v2').then(c=>c.addAll(['index.html','css/style.css'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})</script>
+<script id="f_css" type="text/plain">:root{--p:#1a3a5f;--s:#27ae60}*{box-sizing:border-box}body{font-family:Tahoma;margin:0;background:#f1f4f8}.header{background:var(--p);color:#fff;padding:14px;text-align:center;font-weight:bold}.card{background:#fff;border-radius:12px;padding:14px;margin:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.btn{padding:10px 14px;border:none;border-radius:8px;color:#fff;cursor:pointer}.btn-p{background:var(--p)}.btn-s{background:var(--s)}input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:5px 0}</script>
+<script id="f_db" type="text/plain">// db.js - هنا تطور قاعدة البيانات
+export const DB = {
+  save(key, data){ localStorage.setItem(key, JSON.stringify(data)); },
+  load(key){ return JSON.parse(localStorage.getItem(key) || '[]'); }
+};
+// لاحقا فعل Supabase:
+// import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+// export const supabase = createClient('YOUR_URL','YOUR_KEY')</script>
+<script id="f_app" type="text/plain">import { DB } from './db.js';
+let products = DB.load('products');
+console.log('Hanout V2 جاهز ✅', products);
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+<script id="f_scanner" type="text/plain">export function startScanner(onResult){
+  const qr = new Html5Qrcode("reader");
+  qr.start({facingMode:"environment"}, {fps:15, qrbox:250}, (code)=>{ onResult(code); qr.stop(); });
+}</script>
+<script id="f_printer" type="text/plain">export function printReceipt(sale){
+  document.getElementById('r_total').innerText = sale.total + ' DA';
+  window.print();
+}</script>
 </body>
 </html>
-
