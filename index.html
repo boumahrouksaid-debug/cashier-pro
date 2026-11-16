@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hanout V16 - CAMERA + STOCK FIX</title>
+<title>Hanout V17 - SMART SCANNER AUTO ADD</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
@@ -30,7 +30,7 @@ body{background:#0a0a0a;color:#fff;display:flex;flex-direction:column}
 .row{display:flex;font-size:11px;padding:6px;border-bottom:1px solid #444}
 .row div{flex:1;text-align:center}
 .totY{background:#ffeb00;color:#000;display:flex;justify-content:space-between;padding:6px;font-weight:900;font-size:12px}
-.mid{width:14%;min-width:110px;background:#0f0f0f;overflow:auto;font-size:9px;color:#00d8ff;padding:4px;display:block}
+.mid{width:14%;min-width:110px;background:#0f0f0f;overflow:auto;font-size:9px;color:#00d8ff;padding:4px}
 .right{flex:1;background:#000;display:grid;gap:5px;padding:5px;overflow:auto;grid-template-columns:repeat(auto-fill,minmax(78px,1fr))}
 .prod{background:linear-gradient(#2a2a2a,#111);border:1px solid #555;border-radius:8px;padding:3px;text-align:center;cursor:pointer;min-height:90px;position:relative}
 .prod.shortcut{border:1.5px dashed #ffeb00;background:#2a2500}
@@ -42,7 +42,7 @@ body{background:#0a0a0a;color:#fff;display:flex;flex-direction:column}
 .prod .pr{position:absolute;bottom:2px;right:2px;background:#000;color:#0f0;font-size:7px;padding:1px 3px}
 .prod .q{position:absolute;top:2px;right:2px;background:#ffeb00;color:#000;font-size:8px;padding:2px 5px;font-weight:bold;border-radius:4px}
 .prod .q.r{background:red;color:#fff}
-.bottom{background:#7a0000;display:flex;flex-wrap:wrap;gap:4px;padding:5px;overflow:auto;min-height:160px;-webkit-overflow-scrolling:touch}
+.bottom{background:#7a0000;display:flex;flex-wrap:wrap;gap:4px;padding:5px;overflow:auto;min-height:180px}
 .b{cursor:pointer;padding:8px 2px;border-radius:6px;text-align:center;min-width:70px;flex:1 0 21%;max-width:24%;background:rgba(0,0,0,0.4);font-size:10px;min-height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;color:#fff}
 .b.green{background:#00a000;color:#fff;font-weight:bold;border:2px solid #0f0;flex:1 0 45%;max-width:48%;min-height:58px;font-size:12px}
 .b.yellow{background:#ffcc00;color:#000;font-weight:bold;border:2px solid #ffeb00;flex:1 0 45%;max-width:48%;min-height:58px;font-size:12px}
@@ -52,25 +52,24 @@ body{background:#0a0a0a;color:#fff;display:flex;flex-direction:column}
 .box input{width:100%;padding:11px;margin:5px 0;border:2px solid #ddd;border-radius:8px}
 .btn{padding:11px;border:0;border-radius:8px;font-weight:bold;width:100%;cursor:pointer;margin-top:6px}
 #reader{width:100%;background:#000;border-radius:10px;overflow:hidden}
-#reader video{width:100%!important}
 @media(max-width:600px){
 .main{flex-direction:column}
 .left{width:100%;height:36%;min-width:100%;order:2}
 .mid{display:none!important}
 .right{width:100%;height:34%;order:3;grid-template-columns:repeat(4,1fr)}
-.bottom{order:4;min-height:220px;max-height:45%}
+.bottom{order:4;min-height:230px}
 .b{flex:1 0 30%;max-width:32%}
 }
 </style></head><body>
 
 <div class="top">
 <div class="icons">
-<div class="ibtn" onclick="openAdd()" title="Ajouter">📝</div>
-<div class="ibtn" onclick="showBilan()" title="Bilan">📊</div>
-<div class="ibtn" onclick="balance()" title="Balance">⚖️</div>
-<div class="ibtn" onclick="printInv()" title="Ticket">📄</div>
-<div class="ibtn" onclick="openClientModal()" title="Clients">👥</div>
-<div class="ibtn" onclick="openStock()" id="stockBtn" title="Stock - زر التخزين">👁️</div>
+<div class="ibtn" onclick="openAdd()">📝</div>
+<div class="ibtn" onclick="showBilan()">📊</div>
+<div class="ibtn" onclick="balance()">⚖️</div>
+<div class="ibtn" onclick="printInv()">📄</div>
+<div class="ibtn" onclick="openClientModal()">👥</div>
+<div class="ibtn" onclick="openStock()" id="stockBtn">👁️</div>
 <div class="ibtn exp" onclick="openExpiry()" id="expBtn" style="display:none">⏰</div>
 <div class="ibtn alert" onclick="openStock()" id="alertBtn" style="display:none">🚨</div>
 </div>
@@ -83,7 +82,7 @@ body{background:#0a0a0a;color:#fff;display:flex;flex-direction:column}
 
 <div class="red">
 <span>code :</span><input id="codeIn" class="code" placeholder="Scanner produit / cl">
-<button onclick="openCamScanner()" style="background:#00ff18;color:#000;border:0;padding:8px 10px;border-radius:6px;font-weight:bold;font-size:14px">📷</button>
+<button onclick="openCamScanner()" style="background:#00ff18;color:#000;border:0;padding:8px 10px;border-radius:6px;font-weight:bold">📷</button>
 <button onclick="openSearch()" style="background:#fff;border:0;padding:8px 12px;border-radius:6px">🔍</button>
 <span style="background:#ffb300;color:#000;padding:3px 8px;border-radius:10px;font-weight:bold">F12</span>
 <span>Qte :</span><input id="qte" type="number" value="1" style="width:50px;text-align:center">
@@ -116,14 +115,13 @@ body{background:#0a0a0a;color:#fff;display:flex;flex-direction:column}
 <div class="b yellow" onclick="sellCredit()">📒<br>Crédit دين</div>
 </div>
 
-<!-- كاميرا سكانير حقيقية -->
-<div class="modal" id="mCam"><div class="box" style="max-width:420px"><h3>📷 سكانير كاميرا الهاتف</h3><div id="reader"></div><div style="background:#e8f3ff;padding:8px;border-radius:8px;font-size:12px;margin:8px 0;text-align:center">وجه الكاميرا للكودبار<br>يعمل تلقائيا</div><div style="display:flex;gap:6px"><button class="btn" style="background:#ddd;flex:1" onclick="closeCam()">❌ إغلاق</button><button class="btn" style="background:#000;color:#fff;flex:1" onclick="switchCam()">🔄 قلب الكاميرا</button></div></div></div>
+<div class="modal" id="mCam"><div class="box" style="max-width:420px"><h3>📷 سكانير</h3><div id="reader"></div><div style="background:#e8f3ff;padding:8px;border-radius:8px;font-size:12px;margin:8px 0;text-align:center">وجه الكاميرا للكودبار</div><div style="display:flex;gap:6px"><button class="btn" style="background:#ddd;flex:1" onclick="closeCam()">❌ إغلاق</button><button class="btn" style="background:#000;color:#fff;flex:1" onclick="switchCam()">🔄 قلب</button></div></div></div>
 
 <div class="modal" id="mSearch"><div class="box"><h3>🔍 بحث</h3><input id="searchInput" placeholder="بحث..." oninput="doSearch()"><div id="searchResults" style="margin-top:8px;max-height:320px;overflow:auto;border:1px solid #ddd;border-radius:8px"></div><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
-<div class="modal" id="mStock"><div class="box"><h3>📦 زر التخزين - المخزون</h3><div id="lowBox" style="background:#ffdddd;padding:8px;border-radius:8px;margin:6px 0"></div><div id="stockList" style="max-height:300px;overflow:auto;border:1px solid #ddd;border-radius:8px"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
+<div class="modal" id="mStock"><div class="box"><h3>📦 المخزون</h3><div id="lowBox" style="background:#ffdddd;padding:8px;border-radius:8px;margin:6px 0"></div><div id="stockList" style="max-height:300px;overflow:auto;border:1px solid #ddd;border-radius:8px"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
 <div class="modal" id="mExpiry"><div class="box"><h3>⏰ الصلاحية</h3><div id="expList" style="max-height:300px;overflow:auto;border:1px solid #ddd;border-radius:8px"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
 <div class="modal" id="mClients"><div class="box"><h3>👥 الزبائن</h3><div style="background:#e8f3ff;padding:8px;border-radius:8px"><div style="display:flex;gap:4px"><input id="cName" placeholder="اسم" style="flex:2"><input id="cPhone" placeholder="هاتف" style="flex:1"></div><button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة</button><div id="newBox" style="display:none;background:#fff;border:2px dashed #000;border-radius:8px;padding:8px;text-align:center;margin:6px 0"><b id="newName"></b><br><svg id="bcNew"></svg><div id="bcNewTxt" style="font-family:monospace"></div></div></div><input id="searchClient" placeholder="🔍 بحث..." oninput="renderClients()" style="margin-top:8px"><div id="clientList" style="margin-top:6px;max-height:260px;overflow:auto;border:1px solid #ddd;border-radius:8px"></div><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
-<div class="modal" id="mAdd"><div class="box"><h3 id="addTitle">➕ سلعة</h3><input id="aName" placeholder="اسم السلعة *"><div style="display:flex;gap:4px"><input id="aCode" placeholder="فارغ=⭐ | مملوء=🔍 باركود" style="flex:1"><button style="background:#00ff18;color:#000;border:0;padding:10px 12px;border-radius:8px;font-weight:bold" onclick="openCamForAdd()">📷</button></div><div style="display:flex;gap:4px"><input id="aPrice" type="number" placeholder="بيع *"><input id="aBuyPrice" type="number" placeholder="شراء"></div><div style="display:flex;gap:4px"><input id="aQty" type="number" placeholder="كمية"><input id="aMin" type="number" placeholder="إنذار"></div><input id="aExp" type="date"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">💾 حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
+<div class="modal" id="mAdd"><div class="box"><h3 id="addTitle">➕ سلعة</h3><input id="aName" placeholder="اسم السلعة *"><div style="display:flex;gap:4px"><input id="aCode" placeholder="الكود/باركود" style="flex:1"><button style="background:#00ff18;color:#000;border:0;padding:10px 12px;border-radius:8px;font-weight:bold" onclick="openCamForAdd()">📷</button></div><div style="background:#fffbe6;padding:8px;border-radius:6px;font-size:11px;margin:4px 0;border:1px dashed #ffeb00" id="autoCodeInfo"></div><div style="display:flex;gap:4px"><input id="aPrice" type="number" placeholder="بيع *"><input id="aBuyPrice" type="number" placeholder="شراء"></div><div style="display:flex;gap:4px"><input id="aQty" type="number" placeholder="كمية"><input id="aMin" type="number" placeholder="إنذار"></div><input id="aExp" type="date"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">💾 حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
 <div class="modal" id="mRem"><div class="box"><h3>% Remise</h3><input id="remVal" type="number" placeholder="10"><button class="btn" style="background:#000;color:#fff" onclick="applyRem()">تطبيق</button><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
 <div class="modal" id="mBil"><div class="box"><h3>📊 Bilan</h3><div id="bilTxt"></div><div style="display:flex;gap:6px;margin-top:10px"><button class="btn" style="background:#006600;color:#fff;flex:1" onclick="exportBackup()">💾 تصدير</button><button class="btn" style="background:#ff6600;color:#fff;flex:1" onclick="importBackup()">📥 استرجاع</button></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
 
@@ -133,31 +131,83 @@ let cur=1,cart=[],selectedClient=null,lastAdded=null,disc=0,editTarget=null;
 let all=JSON.parse(localStorage.getItem('allV10')||'null')||[...pages[1],...pages[2]];
 let clients=JSON.parse(localStorage.getItem('cliV10')||'[]');
 let expDays=30;
-let html5Qr=null, currentCamId=null, cams=[], camIndex=0, camMode='sale';
+let html5Qr=null,cams=[],camIndex=0,camMode='sale';
 
 function save(){localStorage.setItem('allV10',JSON.stringify(all));localStorage.setItem('cliV10',JSON.stringify(clients));document.getElementById('cntCli').textContent=clients.length;autoBackup()}
 function daysLeft(exp){if(!exp)return 9999;return Math.ceil((new Date(exp)-new Date())/86400000)}
 function checkAlerts(){let low=all.filter(p=>p.stock<=p.min);let expiring=all.filter(p=>{let d=daysLeft(p.exp);return p.exp&&d>=0&&d<=expDays});document.getElementById('alertLow').style.display=low.length?'block':'none';document.getElementById('lowCount').textContent=low.length;document.getElementById('alertBtn').style.display=low.length?'flex':'none';document.getElementById('stockBtn').className=low.length?'ibtn alert':'ibtn';document.getElementById('alertExp').style.display=expiring.length?'block':'none';document.getElementById('expCount').textContent=expiring.length;document.getElementById('expBtn').style.display=expiring.length?'flex':'none';return {low,expiring}}
 function draw(){let list=pages[cur]&&pages[cur].length?pages[cur]:all.filter(p=>!p.barcode);document.getElementById('grid').innerHTML=list.map(p=>{let d=daysLeft(p.exp);let isLow=p.stock<=p.min;let isExp=p.exp&&d>=0&&d<=expDays;let isShortcut=!p.barcode;return `<div class="prod ${isShortcut?'shortcut':''} ${isLow?'low':''} ${isExp?'exp':''}" onclick="add('${p.code}')" ondblclick="editProduct('${p.code}')"><div style="height:32px;display:flex;align-items:center;justify-content:center;font-size:18px">${isShortcut?'⭐':'📦'}</div><div class="n">${p.name}</div><div class="c ${isShortcut?'s':''}">${p.barcode?p.barcode.slice(-4):p.code}</div><div class="pr">${p.price}</div><div class="q ${isLow?'r':''}">${p.stock}</div></div>`}).join('');checkAlerts()}
-function add(code){let pr=all.find(x=>x.code===code||x.barcode===code||x.name.toLowerCase().includes(code.toLowerCase()));if(!pr){let cl=clients.find(c=>c.barcode===code);if(cl){selectClient(cl.id);return}return openSearch(code)}if(pr.stock<=0)return alert('⛔ نفد');let q=parseInt(document.getElementById('qte').value)||1;let ex=cart.find(x=>x.code===pr.code);if(ex)ex.qty+=q;else cart.push({...pr,qty:q});render()}
+
+// --- SMART ADD - يضيف تلقائيا ---
+function add(code){
+  let pr = all.find(x=> x.code===code || x.barcode===code || x.name.toLowerCase().includes(code.toLowerCase()));
+  if(!pr){
+    let cl = clients.find(c=>c.barcode===code);
+    if(cl){ selectClient(cl.id); return; }
+    // اذا الكود غير موجود -> افتح اضافة تلقائيا
+    if(confirm('🔍 الكود '+code+' غير مسجل.\nهل تريد إضافته كمنتوج جديد؟')){
+      openAddWithCode(code);
+    } else {
+      openSearch(code);
+    }
+    return;
+  }
+  if(pr.stock<=0) return alert('⛔ نفد: '+pr.name);
+  let q = parseInt(document.getElementById('qte').value)||1;
+  let ex = cart.find(x=>x.code===pr.code);
+  if(ex) ex.qty+=q; else cart.push({...pr,qty:q});
+  render();
+}
+
+function openAddWithCode(code){
+  editTarget=null;
+  ['aName','aPrice','aBuyPrice','aQty','aMin','aExp'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('aCode').value = code;
+  document.getElementById('addTitle').textContent = '➕ منتوج جديد - '+code;
+  document.getElementById('autoCodeInfo').innerHTML = `✅ الكود <b>${code}</b> معمر تلقائيا من السكانير<br>زيد الاسم والسعر واحفظ`;
+  document.getElementById('aCode').style.background='#fff9c4';
+  document.getElementById('aCode').style.border='2px solid #00a000';
+  document.getElementById('mAdd').style.display='flex';
+  setTimeout(()=>document.getElementById('aName').focus(),200);
+}
+
 function render(){let t=0;document.getElementById('inv').innerHTML=cart.map(c=>{let m=c.price*c.qty;t+=m;return `<div class="row"><div style="flex:2;text-align:right">${c.name}</div><div>${c.qty}</div><div>${c.price}</div><div>${m}</div></div>`}).join('');if(disc>0)t=t-t*disc/100;document.getElementById('total').textContent=t.toFixed(2).replace('.',',');document.getElementById('t1').textContent=cart.length+' da';document.getElementById('t2').textContent=t;if(cart.length)document.getElementById('prix').value=cart[cart.length-1].price}
 function addByScan(){let v=document.getElementById('codeIn').value.trim().toUpperCase();if(!v)return;add(v);document.getElementById('codeIn').value=''}
 function openSearch(q=''){document.getElementById('mSearch').style.display='flex';if(q)document.getElementById('searchInput').value=q;doSearch(q)}
-function doSearch(preset=''){let q=(preset||document.getElementById('searchInput').value||'').toLowerCase();let filtered=all.filter(p=>!q||p.code.toLowerCase().includes(q)||(p.barcode&&p.barcode.includes(q))||p.name.toLowerCase().includes(q));document.getElementById('searchResults').innerHTML=filtered.map(p=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee"><div onclick="selectFromSearch('${p.code}')"><b>${p.name}</b><br><small>${p.code}|${p.price}DA|${p.stock}</small></div><button onclick="add('${p.code}');closeM()" style="background:#00a000;color:#fff;border:0;padding:6px 10px;border-radius:6px">+ بيع</button></div>`).join('')||'لا يوجد'}
+function doSearch(preset=''){
+  let q=(preset||document.getElementById('searchInput').value||'').toLowerCase().trim();
+  let filtered = all.filter(p=>!q||p.code.toLowerCase().includes(q)||(p.barcode&&p.barcode.includes(q))||p.name.toLowerCase().includes(q));
+  if(filtered.length===0 && q){
+    document.getElementById('searchResults').innerHTML = `
+      <div style="padding:15px;text-align:center">
+        <div style="font-size:16px;margin-bottom:10px">❌ لا يوجد: <b style="background:#ffeb00;padding:2px 6px;border-radius:4px">${q}</b></div>
+        <button onclick="openAddWithCode('${q}');closeM()" style="background:#00a000;color:#fff;border:0;padding:12px 15px;border-radius:8px;font-weight:bold;width:100%;font-size:14px">
+          ➕ إضافة منتوج جديد بهذا الكود<br><small style="font-family:monospace;font-size:12px">${q}</small>
+        </button>
+        <div style="font-size:11px;color:#666;margin-top:8px">اضغط للإضافة تلقائيا</div>
+      </div>`;
+  } else {
+    document.getElementById('searchResults').innerHTML = filtered.map(p=>`
+      <div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee">
+        <div onclick="selectFromSearch('${p.code}')"><b>${p.name}</b><br><small>${p.code}|${p.price}DA|${p.stock}</small></div>
+        <button onclick="add('${p.code}');closeM()" style="background:#00a000;color:#fff;border:0;padding:6px 10px;border-radius:6px">+ بيع</button>
+      </div>`).join('')||'لا يوجد';
+  }
+}
 function selectFromSearch(code){add(code);closeM()}
-function editProduct(code){let p=all.find(x=>x.code===code);if(!p)return;editTarget=p;document.getElementById('aName').value=p.name;document.getElementById('aCode').value=p.barcode||'';document.getElementById('aPrice').value=p.price;document.getElementById('aBuyPrice').value=p.buy||'';document.getElementById('aQty').value=p.stock;document.getElementById('aMin').value=p.min;document.getElementById('aExp').value=p.exp||'';document.getElementById('mAdd').style.display='flex'}
+function editProduct(code){let p=all.find(x=>x.code===code);if(!p)return;editTarget=p;document.getElementById('aName').value=p.name;document.getElementById('aCode').value=p.barcode||'';document.getElementById('aPrice').value=p.price;document.getElementById('aBuyPrice').value=p.buy||'';document.getElementById('aQty').value=p.stock;document.getElementById('aMin').value=p.min;document.getElementById('aExp').value=p.exp||'';document.getElementById('addTitle').textContent='✏️ تعديل: '+p.name;document.getElementById('autoCodeInfo').innerHTML='✏️ تعديل منتوج';document.getElementById('mAdd').style.display='flex'}
 function genBC(){return 'C'+String(clients.length+1).padStart(6,'0')+Date.now().toString().slice(-2)}
 function addClient(){let n=document.getElementById('cName').value.trim();if(!n)return alert('الاسم');let bc=genBC();let cl={id:Date.now(),name:n,phone:document.getElementById('cPhone').value.trim(),barcode:bc,debt:0};clients.push(cl);lastAdded=cl;save();document.getElementById('newBox').style.display='block';document.getElementById('newName').textContent=n;document.getElementById('bcNewTxt').textContent=bc;try{JsBarcode("#bcNew",bc,{format:"CODE128",width:1.6,height:50,displayValue:true})}catch(e){}renderClients()}
 function renderClients(){let q=(document.getElementById('searchClient').value||'').toLowerCase();let f=clients.filter(c=>c.name.toLowerCase().includes(q));document.getElementById('clientList').innerHTML=f.map(c=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee"><div onclick="selectClient(${c.id})"><b>${c.name}</b><br><small>${c.barcode}</small></div><button onclick="selectClient(${c.id})" style="background:#0044ff;color:#fff;border:0;padding:5px 10px;border-radius:6px">✅</button></div>`).join('')||'لا يوجد'}
 function selectClient(id){selectedClient=clients.find(c=>c.id===id);document.getElementById('clientBar').style.display='flex';document.getElementById('clientName').textContent='👤 '+selectedClient.name;closeM()}
 function clearClient(){selectedClient=null;document.getElementById('clientBar').style.display='none'}
 function openClientModal(){document.getElementById('mClients').style.display='flex';renderClients()}
-function openStock(){let {low}=checkAlerts();document.getElementById('lowBox').innerHTML=low.length?`🚨 ${low.length} سلعة ناقصة:<br>`+low.map(p=>`• ${p.name} باقي ${p.stock}`).join('<br>'):'✅ المخزون جيد - زر التخزين يخدم';document.getElementById('stockList').innerHTML=all.map(p=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee;${p.stock<=p.min?'background:#ffdddd':''}"><span>${p.name}</span><span>${p.stock}</span><button onclick="restock('${p.code}')" style="background:#00a000;color:#fff;border:0;padding:2px 6px;border-radius:4px">+10</button></div>`).join('');document.getElementById('mStock').style.display='flex'}
+function openStock(){let {low}=checkAlerts();document.getElementById('lowBox').innerHTML=low.length?`🚨 ${low.length} سلعة ناقصة:<br>`+low.map(p=>`• ${p.name} باقي ${p.stock}`).join('<br>'):'✅ المخزون جيد';document.getElementById('stockList').innerHTML=all.map(p=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee;${p.stock<=p.min?'background:#ffdddd':''}"><span>${p.name}</span><span>${p.stock}</span><button onclick="restock('${p.code}')" style="background:#00a000;color:#fff;border:0;padding:2px 6px;border-radius:4px">+10</button></div>`).join('');document.getElementById('mStock').style.display='flex'}
 function restock(code){let p=all.find(x=>x.code===code);if(p){p.stock+=10;save();draw();openStock()}}
 function openExpiry(){document.getElementById('mExpiry').style.display='flex';document.getElementById('expList').innerHTML=all.filter(p=>p.exp).map(p=>`<div style="padding:8px;border-bottom:1px solid #eee"><b>${p.name}</b> - ${p.exp}</div>`).join('')||'لا يوجد'}
-function openAdd(){editTarget=null;['aName','aCode','aPrice','aBuyPrice','aQty','aMin','aExp'].forEach(id=>document.getElementById(id).value='');document.getElementById('mAdd').style.display='flex'}
+function openAdd(){editTarget=null;['aName','aCode','aPrice','aBuyPrice','aQty','aMin','aExp'].forEach(id=>document.getElementById(id).value='');document.getElementById('addTitle').textContent='➕ سلعة جديدة';document.getElementById('autoCodeInfo').innerHTML='💡 اترك الكود فارغ = ⭐ اختصار<br>املأ الكود = 🔍 باركود';document.getElementById('aCode').style.background='#fff';document.getElementById('aCode').style.border='2px solid #ddd';document.getElementById('mAdd').style.display='flex'}
 function closeM(){document.querySelectorAll('.modal').forEach(m=>{if(m.id!=='mCam')m.style.display='none'})}
-function saveAdd(){let n=document.getElementById('aName').value.trim(),c=document.getElementById('aCode').value.trim(),pr=parseInt(document.getElementById('aPrice').value),buy=parseInt(document.getElementById('aBuyPrice').value)||0,qt=parseInt(document.getElementById('aQty').value)||0,mn=parseInt(document.getElementById('aMin').value)||5,exp=document.getElementById('aExp').value;if(!n||!pr)return alert('الاسم والسعر');if(editTarget){editTarget.name=n;editTarget.barcode=c;editTarget.price=pr;editTarget.stock=qt;editTarget.min=mn;editTarget.exp=exp}else{let code=c?c:'R'+Date.now().toString().slice(-4);all.push({code,name:n,price:pr,buy,stock:qt,min:mn,exp,barcode:c})}save();draw();closeM()}
+function saveAdd(){let n=document.getElementById('aName').value.trim(),c=document.getElementById('aCode').value.trim(),pr=parseInt(document.getElementById('aPrice').value),buy=parseInt(document.getElementById('aBuyPrice').value)||0,qt=parseInt(document.getElementById('aQty').value)||0,mn=parseInt(document.getElementById('aMin').value)||5,exp=document.getElementById('aExp').value;if(!n||!pr)return alert('الاسم والسعر إجباري');if(editTarget){editTarget.name=n;editTarget.barcode=c;editTarget.price=pr;editTarget.buy=buy;editTarget.stock=qt;editTarget.min=mn;editTarget.exp=exp}else{let code=c?c:'R'+Date.now().toString().slice(-4);all.push({code,name:n,price:pr,buy,stock:qt,min:mn,exp,barcode:c})}save();draw();closeM()}
 function switchPage(n){cur=n;draw()}
 function showDivers(){switchPage(3)}
 function filterPain(){let pain=all.filter(p=>!p.barcode);document.getElementById('grid').innerHTML=pain.map(p=>`<div class="prod shortcut" onclick="add('${p.code}')"><div class="c s">${p.code}</div><div class="q">${p.stock}</div><div style="height:32px;display:flex;align-items:center;justify-content:center">⭐</div><div class="n">${p.name}</div><div class="pr">${p.price}</div></div>`).join('')}
@@ -171,32 +221,26 @@ function balance(){let q=prompt('الوزن:');if(q)document.getElementById('qte
 function printInv(){sellCash()}
 function sellCash(){if(!cart.length)return alert('السلة فارغة');let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);if(disc>0)tot=tot-tot*disc/100;cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});save();let w=window.open('','','width=360,height=600');w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>فاتورة نقدي</h3><hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} DA</span></div>`).join('')}<hr><h2>${tot} DA</h2><p>${new Date().toLocaleString()}</p><script>window.print();setTimeout(()=>window.close(),500)<\/script></body></html>`);document.getElementById('bons').innerHTML+='<br>'+new Date().toLocaleTimeString()+' - '+tot+' DA';cart=[];disc=0;render();draw()}
 function sellCredit(){if(!cart.length)return alert('السلة فارغة');if(!selectedClient)return alert('اختر زبون أولا');let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);if(disc>0)tot=tot-tot*disc/100;if(confirm(`بيع دين لـ ${selectedClient.name}؟ ${tot} DA`)){selectedClient.debt=(selectedClient.debt||0)+tot;cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});save();cart=[];disc=0;render();draw()}}
-function exportBackup(){let data={all,clients,pages,date:new Date().toLocaleString(),version:'V16'};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hanout-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
+function exportBackup(){let data={all,clients,pages,date:new Date().toLocaleString(),version:'V17'};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hanout-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
 function importBackup(){let i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>{let f=e.target.files[0];let r=new FileReader();r.onload=ev=>{try{let d=JSON.parse(ev.target.result);if(confirm('استرجاع نسخة '+d.date+'؟')){all=d.all||all;clients=d.clients||clients;save();location.reload()}}catch(err){alert('ملف غير صالح')}};r.readAsText(f)};i.click()}
 function autoBackup(){localStorage.setItem('autoBackup',JSON.stringify({all,clients}));localStorage.setItem('autoBackupTime',new Date().toLocaleString())}
 setInterval(autoBackup,5*60*1000);
 
-// --- كاميرا حقيقية ---
 async function openCamScanner(){camMode='sale';document.getElementById('mCam').style.display='flex';startCam()}
 async function openCamForAdd(){camMode='add';document.getElementById('mCam').style.display='flex';startCam()}
 async function startCam(){
 try{
 cams=await Html5Qrcode.getCameras();
-if(cams&&cams.length){camIndex=0;
 if(!html5Qr)html5Qr=new Html5Qrcode("reader");
-await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:150}},onScanSuccess,(err)=>{});
-}
+await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:150}},onScanSuccess,()=>{});
 }catch(e){
-try{
-if(!html5Qr)html5Qr=new Html5Qrcode("reader");
-await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:250},onScanSuccess,()=>{});
-}catch(err){alert('الكاميرا تحتاج https و إذن - استعمل Chrome و اسمح للكاميرا');}
+try{if(!html5Qr)html5Qr=new Html5Qrcode("reader");await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:250},onScanSuccess,()=>{});}catch(err){alert('الكاميرا تحتاج HTTPS و إذن - افتح بـ Chrome');}
 }
 }
 function onScanSuccess(decoded){
 if(navigator.vibrate)navigator.vibrate(100);
-if(camMode==='sale'){document.getElementById('codeIn').value=decoded;add(decoded);closeCam();}
-else if(camMode==='add'){document.getElementById('aCode').value=decoded;closeCam();document.getElementById('mAdd').style.display='flex';}
+if(camMode==='sale'){closeCam();setTimeout(()=>add(decoded),100);}
+else if(camMode==='add'){closeCam();setTimeout(()=>openAddWithCode(decoded),100);}
 }
 async function closeCam(){try{if(html5Qr){await html5Qr.stop();html5Qr.clear();}}catch(e){}document.getElementById('mCam').style.display='none'}
 async function switchCam(){try{await html5Qr.stop();camIndex=(camIndex+1)%cams.length;await html5Qr.start(cams[camIndex].id,{fps:10,qrbox:250},onScanSuccess,()=>{});}catch(e){await html5Qr.start({facingMode: camIndex%2===0?"environment":"user"},{fps:10,qrbox:250},onScanSuccess,()=>{});}}
