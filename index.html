@@ -1,1 +1,72 @@
-https://boumahi.github.io/cashier-pro/
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>حانوت برو - نظام الكاشير</title><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><style>:root{--p:#7c3aed;--p2:#a78bfa;--y:#facc15;--g:#22c55e;--bg:#f8f7ff}*{box-sizing:border-box;font-family:Tajawal,system-ui}body{margin:0;background:var(--bg);padding:10px}header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:15px;border-radius:16px;text-align:center}h1{margin:0;font-size:22px}.card{background:#fff;border-radius:16px;padding:12px;margin:10px 0;box-shadow:0 4px 12px rgba(0,0,0,.07)}.inp{width:100%;padding:10px;border:2px solid #e5e7eb;border-radius:10px;margin:4px 0;font-size:16px}.btn{padding:10px 14px;border:0;border-radius:10px;font-weight:700;cursor:pointer}.btn-p{background:var(--p);color:#fff}.btn-y{background:var(--y)}.btn-g{background:var(--g);color:#fff;width:100%;font-size:18px;margin-top:8px}table{width:100%;border-collapse:collapse}th{background:#f3f0ff;padding:8px}td{padding:8px;border-bottom:1px solid #eee;text-align:center}#reader{width:100%;border-radius:12px;overflow:hidden;display:none}.cart-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ddd}.total{font-size:22px;font-weight:900;text-align:center;color:var(--p)}@media print{.no-print{display:none}body{background:#fff}}</style></head><body>
+<header><h1>🛒 حانوت برو V2</h1><small>نظام البيع و الجرد و الفاتورة</small></header>
+
+<div class="card no-print">
+<button class="btn btn-p" onclick="toggleScan()">📷 سكانير سلعة</button>
+<div id="reader"></div>
+<input id="scanInput" class="inp" placeholder="اكتب الباركود هنا و اضغط Enter" onkeydown="if(event.key==='Enter')addToCart(this.value)">
+<div id="cart"></div>
+<div class="total" id="total">المجموع: 0 دج</div>
+<button class="btn btn-g no-print" onclick="sell()">بيع + طباعة 🖨️</button>
+</div>
+
+<div class="card">
+<h3>➕ اضافة سلعة</h3>
+<input id="n" class="inp" placeholder="اسم السلعة مثل حليب">
+<input id="b" class="inp" placeholder="باركود">
+<input id="q" class="inp" type="number" placeholder="كمية">
+<input id="pr" class="inp" type="number" placeholder="سعر">
+<button class="btn btn-p" style="width:100%" onclick="saveProd()">حفظ</button>
+</div>
+
+<div class="card">
+<h3>📦 المخزون</h3>
+<table><thead><tr><th>الاسم</th><th>باركود</th><th>كمية</th><th>سعر</th><th>حذف</th></tr></thead><tbody id="list"></tbody></table>
+</div>
+
+<script>
+let stock=JSON.parse(localStorage.getItem('stock')||'[]');
+let cart=[];
+let html5Qr;
+function save(){localStorage.setItem('stock',JSON.stringify(stock));render()}
+function saveProd(){
+ if(!n.value||!b.value)return alert('اكتب الاسم والباركود');
+ stock.push({name:n.value,barcode:b.value,qty:+q.value||0,price:+pr.value||0});
+ n.value=b.value=q.value=pr.value='';save();
+}
+function render(){
+ list.innerHTML=stock.map((p,i)=>`<tr><td>${p.name}</td><td>${p.barcode}</td><td>${p.qty}</td><td>${p.price}</td><td><button onclick="stock.splice(${i},1);save()">❌</button></td></tr>`).join('');
+}
+function addToCart(code){
+ let p=stock.find(s=>s.barcode==code);
+ if(!p)return alert('السلعة غير موجودة');
+ if(p.qty<=0)return alert('نفذت الكمية');
+ let c=cart.find(x=>x.barcode==code);
+ if(c)c.qty++;else cart.push({...p,qty:1});
+ drawCart();scanInput.value='';
+}
+function drawCart(){
+ cartDiv=document.getElementById('cart');
+ let tot=0;
+ cartDiv.innerHTML=cart.map(c=>{tot+=c.price*c.qty;return `<div class=cart-item><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} دج</span></div>`}).join('');
+ total.innerText='المجموع: '+tot+' دج';
+}
+function sell(){
+ if(!cart.length)return alert('السلة فارغة');
+ let tot=0;cart.forEach(c=>{let s=stock.find(x=>x.barcode==c.barcode);if(s)s.qty-=c.qty;tot+=c.price*c.qty});
+ save();drawCartPrint(tot);cart=[];drawCart();save();
+}
+function drawCartPrint(tot){
+ let w=window.open('','','width=300,height=600');
+ w.document.write(`<html dir=rtl><body style=text-align:center;font-family:system-ui><h2>فاتورة حانوت برو</h2><hr>${cart.map(c=>`<div>${c.name} x${c.qty} = ${c.price*c.qty} دج</div>`).join('')}<hr><h2>${tot} دج</h2><p>شكرا لزيارتكم</p><script>window.print();window.close()<\/script></body></html>`);
+}
+function toggleScan(){
+ let r=document.getElementById('reader');
+ if(r.style.display=='none'||!r.style.display){r.style.display='block';
+ if(!html5Qr){html5Qr=new Html5Qrcode("reader");}
+ html5Qr.start({facingMode:"environment"},{fps:10,qrbox:250},(dec)=>{addToCart(dec);html5Qr.stop();r.style.display='none';});
+ }else{html5Qr.stop();r.style.display='none';}
+}
+render();
+</script>
+</body></html>
