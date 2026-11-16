@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hanout Pro V7 - Stock Alert</title>
+<title>Hanout V7.1 - Barcode Fix</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;font-family:Tahoma}body{background:#0a0a0a;color:#fff;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 .top{background:#111;display:flex;justify-content:space-between;padding:5px 8px;border-bottom:3px solid #ffeb00;align-items:center}
 .ibtn{width:42px;height:42px;background:#e8f3ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#000}
-.ibtn.redAlert{background:red;animation:blink 0.8s infinite;color:#fff}
-@keyframes blink{0%{opacity:1}50%{opacity:0.3}100%{opacity:1}}
-.price{font-size:36px;color:#00ff19;font-weight:900}
-.red{background:#b50000;display:flex;gap:5px;padding:6px;align-items:center;flex-wrap:wrap}
+.ibtn.alert{animation:blink 0.8s infinite;background:red;color:#fff}
+@keyframes blink{0%{opacity:1}50%{opacity:0.4}100%{opacity:1}}
+.price{font-size:34px;color:#00ff19;font-weight:900}
+.red{background:#b50000;display:flex;gap:5px;padding:6px;align-items:center}
 .red input{padding:8px;border:0;border-radius:5px}
-.code{flex:1;background:#fff9c4;font-weight:bold;min-width:120px}
+.code{flex:1;background:#fff9c4;font-weight:bold}
 .main{flex:1;display:flex;overflow:hidden}
 .left{width:45%;background:#1e1e1e;display:flex;flex-direction:column}
 .hdr{background:#ffec9e;color:#000;display:flex;font-weight:bold;font-size:10px;padding:5px}
@@ -19,50 +19,48 @@
 .inv{flex:1;overflow:auto;background:#2b2b2b}
 .row{display:flex;font-size:11px;padding:6px;border-bottom:1px solid #3a3a3a}
 .row div{flex:1;text-align:center}
-.row.low{background:#550000}
-.tot{background:yellow;color:#000;display:flex;justify-content:space-between;padding:7px;font-weight:900;font-size:12px}
-.alert-bar{background:#ff0000;color:#fff;padding:6px;text-align:center;font-weight:bold;font-size:12px;display:none;animation:blink 1s infinite}
-.client-bar{background:#005500;color:#fff;padding:5px 8px;display:flex;justify-content:space-between;font-size:11px}
+.tot{background:yellow;color:#000;display:flex;justify-content:space-between;padding:7px;font-weight:900}
+.alert-bar{background:red;color:#fff;padding:6px;text-align:center;font-weight:bold;display:none;animation:blink 1s infinite}
+.client-bar{background:#005500;color:#fff;padding:6px 8px;display:flex;justify-content:space-between;font-size:12px;align-items:center}
 .right{width:55%;background:#000;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;overflow:auto}
-.prod{background:#222;border:1px solid #444;border-radius:7px;padding:3px;text-align:center;cursor:pointer;height:88px;position:relative}
-.prod.low{border:2px solid red;background:#3a0000;animation:blink 2s infinite}
-.prod.out{border:2px solid #666;background:#111;opacity:0.5}
+.prod{background:#222;border:1px solid #444;border-radius:7px;padding:3px;text-align:center;cursor:pointer;height:86px;position:relative}
+.prod.low{border:2px solid red;background:#3a0000}
+.prod.out{opacity:0.4}
 .prod .c{position:absolute;top:1px;left:1px;background:red;color:#fff;font-size:8px;padding:1px 4px;border-radius:3px}
-.prod .p{position:absolute;bottom:1px;right:1px;background:#000;color:#0f0;font-size:8px;padding:1px 3px}
 .prod .q{position:absolute;top:1px;right:1px;background:#ffeb00;color:#000;font-size:8px;padding:1px 4px;border-radius:3px;font-weight:bold}
-.prod .q.qRed{background:red;color:#fff}
-.prod .n{font-size:9px;color:#ffeb3b;margin-top:26px;height:14px;overflow:hidden}
+.prod .q.red{background:red;color:#fff}
+.prod .n{font-size:9px;color:#ffeb3b;margin-top:26px}
 .bottom{background:#1a1a1a;border-top:2px solid #b50000;display:flex;flex-direction:column;gap:3px;padding:4px}
 .b-row{display:flex;gap:4px}
 .b{flex:1;background:#2a2a2a;border:1px solid #444;border-radius:6px;padding:8px 2px;text-align:center;cursor:pointer;font-size:11px}
-.b-green{background:#00a000;color:#fff;font-weight:bold}
-.b-yellow{background:#ffeb00;color:#000;font-weight:bold}
+.b-green{background:#00a000;color:#fff}
 .b-blue{background:#0044ff;color:#fff}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}
-.box{background:#fff;color:#000;padding:14px;border-radius:12px;width:96%;max-width:430px;max-height:90vh;overflow:auto}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:99;padding:8px}
+.box{background:#fff;color:#000;padding:14px;border-radius:12px;width:98%;max-width:440px;max-height:92vh;overflow:auto}
 .box input{width:100%;padding:10px;margin:5px 0;border:2px solid #ddd;border-radius:8px}
 .btn{padding:12px;border:0;border-radius:8px;font-weight:bold;width:100%;cursor:pointer;margin-top:6px}
-.clist{max-height:280px;overflow:auto}
-.citem{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee}
-@media(max-width:768px){.main{flex-direction:column}.left{height:45%}.right{height:55%;width:100%}.price{font-size:28px}}
+.bcBox{background:#fff;padding:10px;border:2px dashed #000;border-radius:8px;text-align:center;margin:10px 0}
 </style></head><body>
 
 <div class="top">
 <div style="display:flex;gap:5px">
-<div class="ibtn" id="stockAlertBtn" onclick="openStock()" title="المخزون">📦</div>
+<div class="ibtn" id="alertBtn" onclick="openStock()">📦</div>
 <div class="ibtn" onclick="openClientModal()">👥</div>
 <div class="ibtn" onclick="openAdd()">➕</div>
 </div>
-<div style="display:flex;gap:8px;align-items:center"><span>DA</span><div class="price" id="total">0,00</div></div>
+<div style="display:flex;gap:6px;align-items:center"><span>DA</span><div class="price" id="total">0,00</div></div>
 </div>
 
-<div class="alert-bar" id="alertBar">🚨 تنبيه: سلع قاربت على النفاد! اضغط 📦</div>
-<div class="client-bar" id="clientBar" style="display:none"><span id="clientName">-</span><span id="clientDebt"></span><button onclick="clearClient()" style="background:red;color:#fff;border:0;padding:2px 8px;border-radius:4px">X</button></div>
+<div class="alert-bar" id="alertBar">🚨 سلع قاربت على النفاد! اضغط 📦</div>
+<div class="client-bar" id="clientBar" style="display:none">
+<span id="clientName">-</span><span id="clientDebt"></span>
+<div style="display:flex;gap:4px"><button onclick="printCurrentClientBarcode()" style="background:#ffeb00;color:#000;border:0;padding:2px 6px;border-radius:4px;font-size:10px">📊 كودبار</button><button onclick="clearClient()" style="background:red;color:#fff;border:0;padding:2px 8px;border-radius:4px">X</button></div>
+</div>
 
 <div class="red">
-<input id="codeIn" class="code" placeholder="سكانير سلعة / زبون..." autofocus>
+<input id="codeIn" class="code" placeholder="سكانير سلعة أو سكانير كودبار زبون (C....)" autofocus>
 <input id="qte" type="number" value="1" style="width:50px;text-align:center">
-<button onclick="addByScan()" style="background:#ffeb00;color:#000;border:0;padding:8px 12px;border-radius:6px;font-weight:bold">OK</button>
+<button onclick="addByScan()" style="background:#ffeb00;color:#000;border:0;padding:8px 10px;border-radius:6px;font-weight:bold">OK</button>
 </div>
 
 <div class="main">
@@ -78,111 +76,107 @@
 <div class="b-row">
 <div class="b" onclick="switchPage(1)">PAGE1 🍞</div>
 <div class="b" onclick="switchPage(2)">PAGE2 📦</div>
-<div class="b b-blue" onclick="openClientModal()">👥 زبون</div>
+<div class="b b-blue" onclick="openClientModal()">👥 زبون + كودبار</div>
 <div class="b" onclick="openStock()">📦 مخزون</div>
 </div>
 <div class="b-row">
 <div class="b" onclick="doRetour()">↩️</div>
-<div class="b b-yellow" onclick="clearCart()">🗑️</div>
+<div class="b" onclick="clearCart()">🗑️</div>
 <div class="b b-green" onclick="sell(false)">💵 نقدي</div>
 <div class="b" style="background:#aa0000;color:#fff" onclick="sell(true)">📒 دين</div>
 </div>
 </div>
 
-<!-- STOCK MODAL -->
-<div class="modal" id="mStock"><div class="box">
-<h3>📦 تتبع المخزون - إنذار نفاد</h3>
-<div style="background:#ffcccc;padding:6px;border-radius:6px;margin:8px 0;font-size:12px" id="lowList"></div>
-<div class="clist" id="stockList"></div>
-<button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button>
-</div></div>
+<!-- MODAL STOCK -->
+<div class="modal" id="mStock"><div class="box"><h3>📦 المخزون</h3><div id="lowList" style="background:#ffdddd;padding:6px;border-radius:6px;margin:6px 0;font-size:12px"></div><div id="stockList"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
 
+<!-- MODAL CLIENT FIXED -->
 <div class="modal" id="mClients"><div class="box">
-<h3>👥 الزبائن</h3><div style="display:flex;gap:5px"><input id="cName" placeholder="الاسم" style="flex:1"><input id="cPhone" placeholder="هاتف" style="flex:1"></div>
-<button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون</button>
-<div style="text-align:center;margin:8px 0"><svg id="bc"></svg></div>
-<input id="searchClient" placeholder="بحث" oninput="renderClients()" style="margin-top:6px">
-<div class="clist" id="clientList"></div>
+<h3>👥 الزبائن - كودبار</h3>
+<div style="display:flex;gap:5px"><input id="cName" placeholder="اسم الزبون" style="flex:1"><input id="cPhone" placeholder="هاتف" style="flex:1"></div>
+<button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون جديد</button>
+
+<div class="bcBox" id="bcContainer" style="display:none">
+<div style="font-size:11px;color:#666;margin-bottom:4px">كودبار الزبون الجديد:</div>
+<svg id="bcNew"></svg>
+<div style="font-size:12px;font-weight:bold;margin-top:4px" id="bcText"></div>
+<button class="btn" style="background:#ffeb00;color:#000;padding:6px;margin-top:8px" onclick="printLastBarcode()">🖨️ طباعة بطاقة الزبون</button>
+</div>
+
+<input id="searchClient" placeholder="🔍 بحث بالاسم أو كودبار..." oninput="renderClients()" style="margin-top:10px">
+<div id="clientList" style="max-height:260px;overflow:auto;margin-top:6px"></div>
 <button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button>
 </div></div>
 
-<div class="modal" id="mAdd"><div class="box"><h3>➕ سلعة + مخزون</h3><input id="aName" placeholder="اسم السلعة"><input id="aCode" placeholder="كود"><input id="aPrice" type="number" placeholder="سعر البيع"><input id="aQty" type="number" placeholder="الكمية الحالية مثلا 50"><input id="aMin" type="number" placeholder="الحد الأدنى للإنذار مثلا 5"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
-<div class="modal" id="mRestock"><div class="box"><h3>📥 تزويد مخزون</h3><div id="restockInfo"></div><input id="restockQty" type="number" placeholder="كمية إضافية"><button class="btn" style="background:#00a000;color:#fff" onclick="doRestock()">تزويد</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
+<div class="modal" id="mAdd"><div class="box"><h3>➕ سلعة</h3><input id="aName" placeholder="اسم"><input id="aCode" placeholder="كود"><input id="aPrice" type="number" placeholder="سعر"><input id="aQty" type="number" placeholder="كمية"><input id="aMin" type="number" placeholder="حد أدنى"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
 
 <script>
-let pages={1:[{code:'A1',name:'خبز عادي',price:10,stock:15,min:5},{code:'A2',name:'بيض',price:20,stock:3,min:10},{code:'A3',name:'خبز بريوش',price:20,stock:25,min:5},{code:'A4',name:'خبز سميد',price:20,stock:2,min:5},{code:'A5',name:'أرز 10كلغ',price:220,stock:40,min:10},{code:'A6',name:'تريدة',price:140,stock:8,min:5}],2:[{code:'B1',name:'زيت 5ل',price:650,stock:12,min:3},{code:'B2',name:'سكر',price:90,stock:0,min:5}]};
-let cur=1, cart=[], disc=0, restockTarget=null;
+let pages={1:[{code:'A1',name:'خبز عادي',price:10,stock:15,min:5},{code:'A2',name:'بيض',price:20,stock:3,min:10},{code:'A3',name:'خبز بريوش',price:20,stock:25,min:5},{code:'A4',name:'خبز سميد',price:20,stock:2,min:5}],2:[{code:'B1',name:'زيت 5ل',price:650,stock:12,min:3}]};
+let cur=1,cart=[],selectedClient=null,lastBarcode=null;
 let all=JSON.parse(localStorage.getItem('all7')||'null')||[...pages[1],...pages[2]];
 let clients=JSON.parse(localStorage.getItem('clients7')||'[]');
-let selectedClient=null;
 
 function saveAll(){localStorage.setItem('all7',JSON.stringify(all));localStorage.setItem('clients7',JSON.stringify(clients))}
-function checkLow(){
- let low=all.filter(p=>p.stock<=p.min);
- document.getElementById('alertBar').style.display=low.length?'block':'none';
- document.getElementById('stockAlertBtn').className=low.length?'ibtn redAlert':'ibtn';
- return low;
-}
-function draw(){
- document.getElementById('grid').innerHTML=pages[cur].map(p=>{
-  let isLow=p.stock<=p.min, isOut=p.stock<=0;
-  return `<div class="prod ${isLow?'low':''} ${isOut?'out':''}" onclick="add('${p.code}')">
-  <div class="c">${p.code}</div><div class="q ${isLow?'qRed':''}">${p.stock}</div>
-  <div style="height:42px;background:${isOut?'#222':'#333'};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px">${isOut?'⛔':(isLow?'⚠️':'🍞')}</div>
-  <div class="n">${p.name}</div><div class="p">${p.price}</div></div>`;
- }).join('');
- checkLow();
-}
+function checkLow(){let low=all.filter(p=>p.stock<=p.min);document.getElementById('alertBar').style.display=low.length?'block':'none';document.getElementById('alertBtn').className=low.length?'ibtn alert':'ibtn';return low}
+function draw(){document.getElementById('grid').innerHTML=pages[cur].map(p=>{let low=p.stock<=p.min,out=p.stock<=0;return `<div class="prod ${low?'low':''} ${out?'out':''}" onclick="add('${p.code}')"><div class="c">${p.code}</div><div class="q ${low?'red':''}">${p.stock}</div><div style="height:42px;background:#333;border-radius:4px;display:flex;align-items:center;justify-content:center">${out?'⛔':low?'⚠️':'🍞'}</div><div class="n">${p.name}</div><div style="font-size:8px;background:#000;color:#0f0;position:absolute;bottom:1px;right:1px;padding:1px 3px;border-radius:3px">${p.price}</div></div>`}).join('');checkLow()}
 function add(code){
  let pr=all.find(x=>x.code===code);
- if(!pr){let cl=clients.find(c=>c.barcode===code);if(cl){selectClient(cl.id);return}return alert('غير موجود: '+code)}
- if(pr.stock<=0)return alert('⛔ نفد المخزون: '+pr.name);
+ if(!pr){
+  // جرب كودبار زبون
+  let cl=clients.find(c=>c.barcode===code);
+  if(cl){selectClient(cl.id);document.getElementById('codeIn').value='';return}
+  return alert('غير موجود: '+code+'\nإذا كان كودبار زبون تأكد أنه يبدأ بـ C');
+ }
+ if(pr.stock<=0)return alert('⛔ نفد: '+pr.name);
  let q=parseInt(document.getElementById('qte').value)||1;
- if(q>pr.stock)return alert('الكمية المطلوبة أكبر من المخزون! باقي: '+pr.stock);
+ if(q>pr.stock)return alert('باقي: '+pr.stock);
  let ex=cart.find(x=>x.code===code);
- if(ex){if(ex.qty+q>pr.stock)return alert('تجاوزت المخزون'); ex.qty+=q}else cart.push({...pr,qty:q});
+ if(ex){if(ex.qty+q>pr.stock)return alert('تجاوزت المخزون');ex.qty+=q}else cart.push({...pr,qty:q});
  render();
 }
-function render(){
- let t=0;document.getElementById('inv').innerHTML=cart.map(x=>{let m=x.price*x.qty;t+=m;let low=x.qty>=x.stock?'low':'';return `<div class="row ${low}"><div style="flex:2;text-align:right">${x.name}</div><div>${x.qty}/${x.stock}</div><div>${x.price}</div><div>${m}</div></div>`}).join('');
- document.getElementById('total').textContent=t.toFixed(2).replace('.',',');
- document.getElementById('t1').textContent=cart.length+' مادة';
- document.getElementById('t2').textContent=t+' DA';
-}
-function sell(isDebt){
- if(!cart.length)return alert('السلة فارغة');
- let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
- if(isDebt){if(!selectedClient)return alert('اختر زبون');selectedClient.debt+=tot;selectedClient.history.push({date:new Date().toLocaleString(),type:'دين',amount:tot})}
- cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});
- saveAll();draw();
- printTicket(tot,isDebt); cart=[];render();
- if(checkLow().length){if(navigator.vibrate)navigator.vibrate([200,100,200]);}
-}
-function openStock(){
- let low=checkLow();
- document.getElementById('lowList').innerHTML=low.length?`🚨 <b>${low.length} سلعة قاربت على النفاد:</b><br>`+low.map(p=>`• ${p.name} - باقي ${p.stock} (الحد ${p.min})`).join('<br>'):`✅ كل المخزون جيد`;
- document.getElementById('stockList').innerHTML=all.map(p=>{
-  let cls=p.stock<=p.min?'style="background:#ffcccc"':'';
-  return `<div class="citem" ${cls}><div><b>${p.name}</b> (${p.code})<br><small>مخزون: ${p.stock} | حد: ${p.min} ${p.stock<=p.min?'🚨':''}</small></div><div><button onclick="openRestock('${p.code}')" style="background:#00a000;color:#fff;border:0;padding:4px 8px;border-radius:4px">+ تزويد</button></div></div>`;
- }).join('');
- document.getElementById('mStock').style.display='flex';
-}
-function openRestock(code){restockTarget=all.find(x=>x.code===code);document.getElementById('restockInfo').innerHTML=`<b>${restockTarget.name}</b><br>المخزون الحالي: ${restockTarget.stock}`;document.getElementById('mRestock').style.display='flex'}
-function doRestock(){let q=parseInt(document.getElementById('restockQty').value)||0;if(q<=0)return;restockTarget.stock+=q;saveAll();draw();closeM();openStock()}
-function addByScan(){let v=document.getElementById('codeIn').value.toUpperCase().trim();if(!v)return;add(v);document.getElementById('codeIn').value=''}
+function render(){let t=0;document.getElementById('inv').innerHTML=cart.map(x=>{let m=x.price*x.qty;t+=m;return `<div class="row"><div style="flex:2;text-align:right">${x.name}</div><div>${x.qty}/${x.stock}</div><div>${x.price}</div><div>${m}</div></div>`}).join('');document.getElementById('total').textContent=t.toFixed(2).replace('.',',');document.getElementById('t1').textContent=cart.length+' مادة';document.getElementById('t2').textContent=t+' DA'}
+function addByScan(){let v=document.getElementById('codeIn').value.toUpperCase().trim();if(!v)return;add(v);document.getElementById('codeIn').value='';document.getElementById('codeIn').focus()}
 function genCode(){return 'C'+Date.now().toString().slice(-6)}
-function addClient(){let n=document.getElementById('cName').value.trim(), ph=document.getElementById('cPhone').value.trim();if(!n)return alert('الاسم');let code=genCode();clients.push({id:Date.now(),name:n,phone:ph,barcode:code,debt:0,history:[]});saveAll();renderClients();try{JsBarcode("#bc",code,{format:"CODE128",width:1.4,height:40,displayValue:true})}catch(e){}}
-function renderClients(){let q=(document.getElementById('searchClient').value||'').toLowerCase();document.getElementById('clientList').innerHTML=clients.filter(c=>c.name.toLowerCase().includes(q)||c.barcode.includes(q)).map(c=>`<div class="citem" onclick="selectClient(${c.id})"><div><b>${c.name}</b><br><small>${c.barcode}</small></div><div style="color:${c.debt>0?'red':'green'}">${c.debt} DA</div></div>`).join('')}
-function selectClient(id){selectedClient=clients.find(c=>c.id===id);document.getElementById('clientBar').style.display='flex';document.getElementById('clientName').textContent='👤 '+selectedClient.name;document.getElementById('clientDebt').textContent='دين: '+selectedClient.debt+' DA';closeM()}
+function addClient(){
+ let name=document.getElementById('cName').value.trim(), phone=document.getElementById('cPhone').value.trim();
+ if(!name)return alert('اكتب اسم الزبون');
+ let code=genCode();
+ let cl={id:Date.now(),name:name,phone:phone,barcode:code,debt:0,history:[]};
+ clients.push(cl);saveAll();lastBarcode=cl;
+ // عرض الكودبار فورا
+ document.getElementById('bcContainer').style.display='block';
+ document.getElementById('bcText').textContent=code+' - '+name;
+ try{JsBarcode("#bcNew",code,{format:"CODE128",width:1.6,height:55,displayValue:true,fontSize:14});}catch(e){alert('خطأ كودبار: '+e)}
+ document.getElementById('cName').value='';document.getElementById('cPhone').value='';
+ renderClients();
+}
+function printLastBarcode(){if(!lastBarcode)return;printBarcodeCard(lastBarcode)}
+function printBarcodeCard(cl){
+ let w=window.open('','','width=380,height=550');
+ w.document.write(`<html dir=rtl><head><meta charset="UTF-8"><style>body{font-family:Tahoma;text-align:center;padding:20px} .card{border:2px solid #000;border-radius:12px;padding:15px} svg{width:100%}</style></head><body><div class="card"><h2>🛒 حانوت برو</h2><h3>بطاقة زبون</h3><h2>${cl.name}</h2><p>📞 ${cl.phone}</p><svg id="b"></svg><h3>${cl.barcode}</h3><p style="color:red;font-weight:bold">الدين: ${cl.debt} DA</p></div><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><script>JsBarcode("#b","${cl.barcode}",{format:"CODE128",width:2,height:70,displayValue:true});setTimeout(()=>{window.print();window.close()},500)<\/script></body></html>`);
+}
+function renderClients(){
+ let q=(document.getElementById('searchClient').value||'').toLowerCase();
+ document.getElementById('clientList').innerHTML=clients.filter(c=>c.name.toLowerCase().includes(q)||c.barcode.toLowerCase().includes(q)||c.phone.includes(q)).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #eee"><div style="cursor:pointer;flex:1" onclick="selectClient(${c.id})"><b>${c.name}</b><br><small style="font-family:monospace;background:#eee;padding:1px 4px">${c.barcode}</small> - ${c.phone}<br><small style="color:${c.debt>0?'red':'green'}">دين: ${c.debt} DA</small></div><div style="display:flex;flex-direction:column;gap:3px"><button onclick="printBarcodeCard(clients.find(x=>x.id===${c.id}))" style="background:#ffeb00;border:0;padding:4px 6px;border-radius:4px;font-size:10px">📊 كودبار</button><button onclick="selectClient(${c.id})" style="background:#0044ff;color:#fff;border:0;padding:4px 6px;border-radius:4px;font-size:10px">اختيار</button></div></div>`).join('')||'<div style="text-align:center;padding:10px;color:#999">لا يوجد</div>';
+}
+function selectClient(id){selectedClient=clients.find(c=>c.id===id);document.getElementById('clientBar').style.display='flex';document.getElementById('clientName').textContent='👤 '+selectedClient.name+' ['+selectedClient.barcode+']';document.getElementById('clientDebt').textContent='دين: '+selectedClient.debt+' DA';closeM()}
 function clearClient(){selectedClient=null;document.getElementById('clientBar').style.display='none'}
+function printCurrentClientBarcode(){if(selectedClient)printBarcodeCard(selectedClient)}
 function openClientModal(){document.getElementById('mClients').style.display='flex';renderClients()}
+function openStock(){let low=checkLow();document.getElementById('lowList').innerHTML=low.length?`🚨 ${low.length} سلعة ناقصة:<br>`+low.map(p=>`• ${p.name} باقي ${p.stock}`).join('<br>'):'✅ المخزون جيد';document.getElementById('stockList').innerHTML=all.map(p=>`<div style="display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid #eee;${p.stock<=p.min?'background:#ffdddd':''}"><span>${p.name} (${p.code}) - ${p.stock}</span><span>${p.stock<=p.min?'🚨':''}</span></div>`).join('');document.getElementById('mStock').style.display='flex'}
 function openAdd(){document.getElementById('mAdd').style.display='flex'}
 function closeM(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
 function saveAdd(){let n=document.getElementById('aName').value,c=document.getElementById('aCode').value,p=parseInt(document.getElementById('aPrice').value),qt=parseInt(document.getElementById('aQty').value)||0,mn=parseInt(document.getElementById('aMin').value)||5;if(!n||!c||!p)return alert('كمل');let np={code:c,name:n,price:p,stock:qt,min:mn};all.push(np);pages[cur].push(np);saveAll();draw();closeM()}
 function switchPage(n){cur=n;draw()}
 function doRetour(){cart.pop();render()}
 function clearCart(){if(confirm('تفرغ؟')){cart=[];render()}}
-function printTicket(tot,isDebt){let w=window.open('','','width=320,height=500');let cli=selectedClient?`زبون: ${selectedClient.name}<br>`:'';w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>${isDebt?'دين':'نقدي'}</h3>${cli}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty}</span></div>`).join('')}<hr><h2>${tot} DA</h2><script>window.print();window.close()<\/script></body></html>`)}
+function sell(isDebt){
+ if(!cart.length)return alert('السلة فارغة');
+ let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
+ if(isDebt){if(!selectedClient)return alert('اختر زبون أولا 👥');selectedClient.debt+=tot;selectedClient.history.push({date:new Date().toLocaleString(),type:'دين',amount:tot});saveAll();}
+ cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});saveAll();draw();
+ let w=window.open('','','width=320,height=500');let cli=selectedClient?`زبون: ${selectedClient.name} (${selectedClient.barcode})<br>`:'';w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>${isDebt?'فاتورة دين':'فاتورة'}</h3>${cli}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty}</span></div>`).join('')}<hr><h2>${tot} DA</h2><script>window.print();window.close()<\/script></body></html>`);cart=[];render();
+}
 document.getElementById('codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')addByScan()});
 draw();render();checkLow();
 </script></body></html>
