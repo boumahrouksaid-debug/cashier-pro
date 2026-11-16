@@ -141,6 +141,8 @@ function expiryBadge(p){let d=daysLeft(p.expiry);if(d===null)return '<span class
 function stockBadge(p){let min=p.min||5;if(p.stock==0)return '<span class="badge-red">⛔ خلاصت!</span>';if(p.stock<=min)return '<span class="badge-red">🚨 باقي '+p.stock+'</span>';return '<span class="badge-green">مخزون '+p.stock+'</span>';}
 function showTab(n){[1,2,3,4,5,6,7].forEach(i=>{let el=document.getElementById('tab'+i);if(el)el.classList.toggle('hidden',i!==n);});setTimeout(drawBarcodes,100);}
 function drawBarcodes(){custs.forEach((c,i)=>{let el=document.getElementById('bc-'+i);if(el){try{JsBarcode(el,c.barcode,{format:'CODE128',width:1.5,height:45,displayValue:true,fontSize:13,margin:4});}catch(e){}}});}
+let searchQ='';
+function filterProd(){searchQ=document.getElementById('searchProd').value.trim();let items=document.querySelectorAll('#prodList .item');items.forEach(el=>{el.style.display=!searchQ||el.innerText.includes(searchQ)?'flex':'none';});}
 function render(){
 let h='';prods.forEach((p,i)=>{let exp=daysLeft(p.expiry)!==null&&daysLeft(p.expiry)<0;h+=`<div class="item" style="${exp?'border:2px solid #ef4444':''}"><div><b>${p.name} ${exp?'⛔':''}</b><br><span>${p.price} دج | ${stockBadge(p)} | ${expiryBadge(p)}</span></div><button class="btn-green" style="padding:8px 14px;border:0;border-radius:8px" ${exp?'disabled style="background:#555;padding:8px 14px;border:0;border-radius:8px"':''} onclick="addToCart(${i})">+ أضف</button></div>`;});
 document.getElementById('prodList').innerHTML=h;
