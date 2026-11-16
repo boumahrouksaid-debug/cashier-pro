@@ -1,174 +1,187 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hanout V7.2 Multi Clients</title>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hanout PRO V8 - FULL</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;font-family:Tahoma}body{background:#0a0a0a;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.top{background:#111;display:flex;justify-content:space-between;padding:5px 8px;border-bottom:3px solid #ffeb00}
-.ibtn{width:42px;height:42px;background:#e8f3ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#000}
-.price{font-size:32px;color:#00ff19;font-weight:900}
-.red{background:#b50000;display:flex;gap:5px;padding:6px}
-.red input{padding:8px;border:0;border-radius:5px}
-.code{flex:1;background:#fff9c4;font-weight:bold}
+*{box-sizing:border-box;margin:0;font-family:Tahoma}body{background:#0a0a0a;color:#fff;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.top{background:linear-gradient(#2a2a2a,#000);display:flex;justify-content:space-between;padding:3px 6px;border-bottom:3px solid #ffeb00;align-items:center}
+.icons{display:flex;gap:4px}
+.ibtn{width:38px;height:38px;background:#e8f3ff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:#000;border:2px solid transparent}
+.ibtn.alert{background:red;color:#fff;animation:blink 0.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.price{font-size:44px;color:#00ff18;font-weight:900;text-shadow:0 0 10px #00ff18}
+.red{background:#c00000;display:flex;gap:4px;padding:5px;align-items:center;flex-wrap:wrap;font-size:11px}
+.red input{padding:7px;border:0;border-radius:4px}
+.code{flex:1;min-width:130px;background:#fff9c4;font-weight:bold}
 .main{flex:1;display:flex;overflow:hidden}
-.left{width:45%;background:#1e1e1e;display:flex;flex-direction:column}
-.hdr{background:#ffec9e;color:#000;display:flex;font-weight:bold;font-size:10px;padding:5px}
+.left{width:38%;background:#1e1e1e;display:flex;flex-direction:column;border-right:2px solid #333}
+.hdr{background:#ffeab0;color:#000;display:flex;font-weight:bold;font-size:10px;padding:4px}
 .hdr span{flex:1;text-align:center}
 .inv{flex:1;overflow:auto;background:#2b2b2b}
-.row{display:flex;font-size:11px;padding:6px;border-bottom:1px solid #444}
+.row{display:flex;font-size:11px;padding:5px;border-bottom:1px solid #444}
 .row div{flex:1;text-align:center}
-.tot{background:yellow;color:#000;display:flex;justify-content:space-between;padding:7px;font-weight:900}
-.client-bar{background:#005500;color:#fff;padding:6px 8px;display:flex;justify-content:space-between;font-size:12px}
-.right{width:55%;background:#000;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;overflow:auto}
-.prod{background:#222;border:1px solid #444;border-radius:7px;padding:3px;text-align:center;cursor:pointer;height:86px;position:relative}
-.prod .c{position:absolute;top:1px;left:1px;background:red;color:#fff;font-size:8px;padding:1px 4px;border-radius:3px}
-.prod .q{position:absolute;top:1px;right:1px;background:#ffeb00;color:#000;font-size:8px;padding:1px 4px;border-radius:3px;font-weight:bold}
-.prod .n{font-size:9px;color:#ffeb3b;margin-top:26px}
-.bottom{background:#1a1a1a;border-top:2px solid #b50000;display:flex;flex-direction:column;gap:3px;padding:4px}
-.b-row{display:flex;gap:4px}
-.b{flex:1;background:#2a2a2a;border:1px solid #444;border-radius:6px;padding:8px 2px;text-align:center;cursor:pointer;font-size:11px}
-.b-green{background:#00a000;color:#fff}
-.b-blue{background:#0044ff;color:#fff}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:99;padding:6px}
-.box{background:#fff;color:#000;padding:12px;border-radius:12px;width:98%;max-width:460px;max-height:95vh;overflow:auto}
-.box input{width:100%;padding:10px;margin:4px 0;border:2px solid #ddd;border-radius:8px}
-.btn{padding:11px;border:0;border-radius:8px;font-weight:bold;width:100%;cursor:pointer;margin-top:5px}
-.bcBox{background:#fff;border:2px solid #000;border-radius:10px;padding:8px;text-align:center;margin:8px 0}
-.cList{max-height:340px;overflow:auto;border:1px solid #ddd;border-radius:8px;margin-top:8px}
-.cItem{padding:8px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
-.cItem:nth-child(odd){background:#f9f9f9}
-@media(max-width:768px){.main{flex-direction:column}.left{height:45%}.right{height:55%;width:100%}}
+.row.low{background:#550000}
+.totY{background:#ffeb00;color:#000;display:flex;justify-content:space-between;padding:5px;font-weight:900;font-size:12px}
+.alert{background:red;color:#fff;padding:4px;text-align:center;font-size:11px;display:none;animation:blink 1s infinite;font-weight:bold}
+.client{background:#005500;color:#fff;padding:4px 6px;display:flex;justify-content:space-between;font-size:11px}
+.mid{width:14%;background:#0f0f0f;overflow:auto;font-size:9px;color:#00d8ff;padding:3px;line-height:1.5}
+.right{width:48%;background:#000;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;overflow:auto;align-content:start}
+.prod{background:linear-gradient(#2a2a2a,#111);border:1px solid #444;border-radius:5px;padding:2px;text-align:center;cursor:pointer;height:84px;position:relative}
+.prod.low{border:2px solid red;background:#3a0000}
+.prod.out{opacity:0.4}
+.prod img{width:100%;height:42px;object-fit:cover;border-radius:3px;background:#222}
+.prod .n{font-size:8px;color:#ffeb3b;height:14px;overflow:hidden;margin-top:1px}
+.prod .c{position:absolute;bottom:1px;left:1px;background:red;color:#fff;font-size:7px;padding:1px 3px}
+.prod .pr{position:absolute;bottom:1px;right:1px;background:#000;color:#0f0;font-size:7px;padding:1px 2px}
+.prod .q{position:absolute;top:1px;right:1px;background:#ffeb00;color:#000;font-size:7px;padding:1px 3px;font-weight:bold;border-radius:3px}
+.prod .q.r{background:red;color:#fff}
+.bottom{background:#b00000;display:flex;justify-content:space-around;padding:3px;font-size:9px;flex-wrap:wrap;gap:1px}
+.b{cursor:pointer;padding:5px 4px;border-radius:4px;text-align:center;min-width:52px}
+.b:hover{background:rgba(255,255,255,0.2)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:99;padding:6px}
+.box{background:#fff;color:#000;padding:12px;border-radius:10px;width:98%;max-width:460px;max-height:95vh;overflow:auto}
+.box input{width:100%;padding:9px;margin:4px 0;border:2px solid #ddd;border-radius:6px}
+.btn{padding:10px;border:0;border-radius:6px;font-weight:bold;width:100%;cursor:pointer;margin-top:5px}
+.bc{background:#fff;border:2px dashed #000;border-radius:8px;padding:8px;text-align:center;margin:6px 0}
+.cList{max-height:300px;overflow:auto;border:1px solid #ddd;border-radius:6px}
+@media(max-width:768px){.main{flex-direction:column}.left{width:100%;height:38%}.mid{display:none}.right{width:100%;height:42%}.price{font-size:32px}.bottom{font-size:8px}}
 </style></head><body>
 
 <div class="top">
-<div style="display:flex;gap:5px"><div class="ibtn" onclick="openStock()">📦</div><div class="ibtn" onclick="openClientModal()">👥</div><div class="ibtn" onclick="openAdd()">➕</div></div>
-<div style="display:flex;gap:6px;align-items:center"><span>DA</span><div class="price" id="total">0,00</div></div>
+<div class="icons">
+<div class="ibtn" onclick="openAdd()" title="Ajouter">📝</div>
+<div class="ibtn" onclick="showBilan()" title="Bilan">📊</div>
+<div class="ibtn" onclick="openStock()" title="Stock" id="stockBtn">👁️</div>
+<div class="ibtn" onclick="balance()" title="Balance">⚖️</div>
+<div class="ibtn" onclick="printInv()" title="Ticket">📄</div>
+<div class="ibtn" onclick="openClientModal()" title="Clients">👥</div>
+<div class="ibtn" id="alertIcon" onclick="openStock()" style="display:none;background:red;color:#fff">🚨</div>
+</div>
+<div style="display:flex;align-items:center;gap:6px"><div class="price" id="total">0,00</div><span style="color:#00ff18;font-weight:bold">DA</span></div>
 </div>
 
-<div class="client-bar" id="clientBar" style="display:none"><span id="clientName"></span><span id="clientDebt"></span><button onclick="clearClient()" style="background:red;color:#fff;border:0;padding:2px 8px;border-radius:4px">X</button></div>
+<div class="alert" id="alertBar">🚨 تنبيه: <span id="alertText"></span> سلعة ناقصة! اضغط 👁️</div>
+<div class="client" id="clientBar" style="display:none"><span id="clientName">-</span><span id="clientDebt"></span><div style="display:flex;gap:3px"><button onclick="printCurrentCard()" style="background:#ffeb00;color:#000;border:0;padding:2px 6px;border-radius:4px;font-size:9px">📊 كودبار</button><button onclick="clearClient()" style="background:red;color:#fff;border:0;padding:2px 6px;border-radius:4px">X</button></div></div>
 
 <div class="red">
-<input id="codeIn" class="code" placeholder="سكانير سلعة أو سكانير كودبار أي زبون C..." autofocus>
-<input id="qte" type="number" value="1" style="width:50px;text-align:center">
-<button onclick="addByScan()" style="background:#ffeb00;color:#000;border:0;padding:8px;border-radius:6px;font-weight:bold">OK</button>
+<span>code :</span><input id="codeIn" class="code" placeholder="Scanner produit ou client C..." autofocus>
+<span style="background:#ffb300;color:#000;padding:2px 6px;border-radius:10px">🖥️ F12</span>
+<span>Qte :</span><input id="qte" type="number" value="1" style="width:45px;text-align:center">
+<span>Prix</span><input id="prix" style="width:55px" readonly><span>Da</span>
+<span>Prix Col:</span><input id="prixCol" style="width:60px" value="300" readonly><span>Da</span>
 </div>
 
 <div class="main">
-<div class="left"><div class="hdr"><span style="flex:2">Article</span><span>Qte</span><span>Prix</span><span>Mont</span></div><div class="inv" id="inv"></div><div class="tot"><span id="t1">0</span><span id="t2">0 DA</span></div></div>
+<div class="left">
+<div class="hdr"><span style="flex:2">Article</span><span>Qte</span><span>Prix_Vt</span><span>Montant</span></div>
+<div class="inv" id="inv"></div>
+<div class="totY"><span id="t1">0 da</span><span id="t2">0</span><span>da</span></div>
+</div>
+<div class="mid" id="bons"><b>Liste des Bons</b><br>17:39:48<br>17:38:31<br>17:36:10<br>17:34:26<br>17:31:08<br>17:30:10<br>17:29:22<br>17:27:40</div>
 <div class="right" id="grid"></div>
 </div>
 
 <div class="bottom">
-<div class="b-row"><div class="b" onclick="switchPage(1)">PAGE1</div><div class="b" onclick="switchPage(2)">PAGE2</div><div class="b b-blue" onclick="openClientModal()">👥 كل الزبائن (<span id="countClients">0</span>)</div><div class="b" onclick="openStock()">📦</div></div>
-<div class="b-row"><div class="b" onclick="doRetour()">↩️</div><div class="b" onclick="clearCart()">🗑️</div><div class="b b-green" onclick="sell(false)">💵 نقدي</div><div class="b" style="background:#aa0000;color:#fff" onclick="sell(true)">📒 دين</div></div>
+<div class="b" onclick="openAdd()">📦<br>Ajouter</div>
+<div class="b" onclick="printInv()">🖨️<br>Imprimé</div>
+<div class="b" onclick="showDivers()">⬇️<br>Divers</div>
+<div class="b" onclick="doRetour()">↩️<br>Retour</div>
+<div class="b" onclick="switchPage(1)">PAGE 01</div>
+<div class="b" onclick="switchPage(2)">PAGE 02</div>
+<div class="b" onclick="switchPage(3)">PAGE 03</div>
+<div class="b" onclick="switchPage(4)">PAGE 04</div>
+<div class="b" onclick="filterPain()">PAIN OEUF</div>
+<div class="b" onclick="changeQty(1)">➕</div>
+<div class="b" onclick="changeQty(-1)">➖</div>
+<div class="b" onclick="openRemise()">🏷️%<br>Remise</div>
+<div class="b" onclick="openTiroir()">🗄️<br>Ouvrir T</div>
+<div class="b" onclick="openClientModal()" style="background:#0044ff;color:#fff">👥<br>Clients (<span id="cntCli">0</span>)</div>
 </div>
 
-<!-- CLIENTS MULTI -->
+<!-- MODALS -->
+<div class="modal" id="mStock"><div class="box"><h3>📦 المخزون - إنذار</h3><div id="lowBox" style="background:#ffdddd;padding:6px;border-radius:6px;margin:6px 0;font-size:12px"></div><div id="stockList" class="cList"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
+
 <div class="modal" id="mClients"><div class="box">
-<h3>👥 كل الزبائن - كل واحد بكودبار خاص</h3>
-<div style="background:#e8f3ff;padding:8px;border-radius:8px;margin:6px 0">
-<div style="display:flex;gap:4px"><input id="cName" placeholder="اسم الزبون الجديد" style="flex:2"><input id="cPhone" placeholder="هاتف" style="flex:1"></div>
-<button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون جديد (يتولدلو كودبار تلقائي)</button>
-<div id="newClientBox" style="display:none" class="bcBox">
-<div style="font-size:12px;color:#000">✅ تم إضافة: <b id="newName"></b></div>
-<svg id="bcNew"></svg>
-<div id="bcNewText" style="font-family:monospace;font-weight:bold;font-size:13px"></div>
-<button class="btn" style="background:#ffeb00;color:#000;padding:8px" onclick="printLast()">🖨️ طباعة بطاقة هذا الزبون</button>
+<h3>👥 كل الزبائن - كل واحد كودبار خاص</h3>
+<div style="background:#e8f3ff;padding:8px;border-radius:8px">
+<div style="display:flex;gap:4px"><input id="cName" placeholder="اسم زبون جديد" style="flex:2"><input id="cPhone" placeholder="هاتف" style="flex:1"></div>
+<button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون (كودبار تلقائي)</button>
+<div id="newBox" style="display:none" class="bc"><div>✅ <b id="newName"></b></div><svg id="bcNew"></svg><div id="bcNewTxt" style="font-family:monospace;font-weight:bold"></div><button class="btn" style="background:#ffeb00;color:#000;padding:6px" onclick="printLast()">🖨️ طباعة بطاقة</button></div>
 </div>
-</div>
-
-<div style="display:flex;gap:4px;margin-top:8px"><input id="searchClient" placeholder="🔍 ابحث بالاسم أو كودبار أو هاتف..." oninput="renderClients()" style="flex:1"><button onclick="printAllBarcodes()" style="background:#000;color:#fff;border:0;padding:8px 10px;border-radius:8px;font-size:11px">🖨️ طباعة كل الكودبارات</button></div>
-
-<div class="cList" id="clientList"></div>
+<div style="display:flex;gap:4px;margin-top:8px"><input id="searchClient" placeholder="🔍 بحث..." oninput="renderClients()" style="flex:1"><button onclick="printAll()" style="background:#000;color:#fff;border:0;padding:6px 8px;border-radius:6px;font-size:10px">🖨️ كل البطاقات</button></div>
+<div id="clientList" class="cList" style="margin-top:6px"></div>
 <button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button>
 </div></div>
 
-<div class="modal" id="mStock"><div class="box"><h3>📦 المخزون</h3><div id="stockList"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
-<div class="modal" id="mAdd"><div class="box"><h3>➕ سلعة</h3><input id="aName" placeholder="اسم"><input id="aCode" placeholder="كود"><input id="aPrice" type="number" placeholder="سعر"><input id="aQty" type="number" placeholder="كمية"><input id="aMin" type="number" placeholder="حد أدنى"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
+<div class="modal" id="mAdd"><div class="box"><h3>➕ سلعة + مخزون</h3><input id="aName" placeholder="Nom"><input id="aCode" placeholder="Code"><input id="aPrice" type="number" placeholder="Prix"><input id="aQty" type="number" placeholder="Quantité"><input id="aMin" type="number" placeholder="Seuil alerte"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
+<div class="modal" id="mRem"><div class="box"><h3>% Remise</h3><input id="remVal" type="number" placeholder="10"><button class="btn" style="background:#000;color:#fff" onclick="applyRem()">تطبيق</button><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
+<div class="modal" id="mBil"><div class="box"><h3>📊 Bilan</h3><div id="bilTxt" style="line-height:1.8"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
 
 <script>
-let pages={1:[{code:'A1',name:'خبز عادي',price:10,stock:20,min:5},{code:'A2',name:'بيض',price:20,stock:30,min:10},{code:'A3',name:'خبز بريوش',price:20,stock:15,min:5},{code:'A4',name:'خبز سميد',price:20,stock:8,min:5},{code:'A5',name:'أرز',price:220,stock:40,min:10}],2:[{code:'B1',name:'زيت 5ل',price:650,stock:12,min:3},{code:'B2',name:'سكر',price:90,stock:20,min:5}]};
-let cur=1,cart=[],selectedClient=null,lastAdded=null;
-let all=JSON.parse(localStorage.getItem('all72')||'null')||[...pages[1],...pages[2]];
-let clients=JSON.parse(localStorage.getItem('clients72')||'[]');
+let pages={
+1:[{code:'A1',name:'خبز عادي',price:10,stock:20,min:5,img:'https://images.unsplash.com/photo-1549931319-a545dcf3d696?w=200'},{code:'A2',name:'بيض',price:20,stock:3,min:10,img:'https://images.unsplash.com/photo-1482049016688-2d3e1b31122f?w=200'},{code:'A3',name:'خبز بريوش',price:20,stock:25,min:5,img:''},{code:'A4',name:'خبز سميد',price:20,stock:2,min:5,img:''},{code:'A5',name:'أرز أبيض 10كلغ',price:220,stock:40,min:10,img:''},{code:'A6',name:'تريدة 10كلغ',price:140,stock:8,min:5,img:''},{code:'A7',name:'حمص 50كلغ',price:440,stock:15,min:5,img:''},{code:'A8',name:'عدس أحمر 10كلغ',price:220,stock:12,min:5,img:''}],
+2:[{code:'A9',name:'أرز بسمتي 25كلغ',price:220,stock:10,min:3,img:''},{code:'A10',name:'عدس خشن 50كلغ',price:220,stock:6,min:3,img:''},{code:'A11',name:'فريك ميزان',price:300,stock:4,min:5,img:''},{code:'A12',name:'كاكاو أخضر 25كلغ',price:480,stock:9,min:3,img:''}],
+3:[{code:'B1',name:'زيت 5ل',price:650,stock:12,min:3,img:''},{code:'B2',name:'سكر 10كلغ',price:900,stock:5,min:3,img:''}],
+4:[{code:'C1',name:'ماء 1.5ل',price:40,stock:50,min:10,img:''}]
+};
+let cur=1,cart=[],selectedClient=null,lastAdded=null,disc=0;
+let all=JSON.parse(localStorage.getItem('allV8')||'null')||[...pages[1],...pages[2],...pages[3],...pages[4]];
+let clients=JSON.parse(localStorage.getItem('cliV8')||'[]');
 
-function saveAll(){localStorage.setItem('all72',JSON.stringify(all));localStorage.setItem('clients72',JSON.stringify(clients));updateCount()}
-function updateCount(){document.getElementById('countClients').textContent=clients.length}
-function draw(){document.getElementById('grid').innerHTML=pages[cur].map(p=>`<div class="prod" onclick="add('${p.code}')"><div class="c">${p.code}</div><div class="q">${p.stock}</div><div style="height:42px;background:#333;border-radius:4px;display:flex;align-items:center;justify-content:center">🍞</div><div class="n">${p.name}</div></div>`).join('')}
+function save(){localStorage.setItem('allV8',JSON.stringify(all));localStorage.setItem('cliV8',JSON.stringify(clients));document.getElementById('cntCli').textContent=clients.length}
+function checkLow(){let low=all.filter(p=>p.stock<=p.min);document.getElementById('alertBar').style.display=low.length?'block':'none';document.getElementById('alertIcon').style.display=low.length?'flex':'none';document.getElementById('alertText').textContent=low.length;document.getElementById('stockBtn').className=low.length?'ibtn alert':'ibtn';return low}
+function draw(){
+ let list=pages[cur]||all;
+ document.getElementById('grid').innerHTML=list.map(p=>{let low=p.stock<=p.min,out=p.stock<=0;return `<div class="prod ${low?'low':''} ${out?'out':''}" onclick="add('${p.code}')">${p.img?`<img src="${p.img}">`:`<div style="height:42px;background:#333;display:flex;align-items:center;justify-content:center">${out?'⛔':low?'⚠️':'📦'}</div>`}<div class="n">${p.name}</div><div class="c">${p.code}</div><div class="pr">${p.price}</div><div class="q ${low?'r':''}">${p.stock}</div></div>`}).join('');checkLow();
+}
 function add(code){
  let pr=all.find(x=>x.code===code);
  if(!pr){
-  let cl=clients.find(c=>c.barcode===code); // يخدم مع أي زبون
+  let cl=clients.find(c=>c.barcode===code||c.barcode.toLowerCase()===code.toLowerCase());
   if(cl){selectClient(cl.id);return}
-  // جرب يلقاه كـ barcode بدون C كبير
-  let cl2=clients.find(c=>c.barcode.toLowerCase()===code.toLowerCase());
-  if(cl2){selectClient(cl2.id);return}
   return alert('غير موجود: '+code);
  }
  if(pr.stock<=0)return alert('⛔ نفد: '+pr.name);
  let q=parseInt(document.getElementById('qte').value)||1;
+ if(q>pr.stock)return alert('باقي: '+pr.stock);
  let ex=cart.find(x=>x.code===code);
- if(ex)ex.qty+=q;else cart.push({...pr,qty:q});
+ if(ex){if(ex.qty+q>pr.stock)return alert('تجاوزت');ex.qty+=q}else cart.push({...pr,qty:q});
  render();
 }
-function render(){let t=0;document.getElementById('inv').innerHTML=cart.map(x=>{let m=x.price*x.qty;t+=m;return `<div class="row"><div style="flex:2;text-align:right">${x.name}</div><div>${x.qty}</div><div>${x.price}</div><div>${m}</div></div>`}).join('');document.getElementById('total').textContent=t.toFixed(2).replace('.',',');document.getElementById('t1').textContent=cart.length+' مادة';document.getElementById('t2').textContent=t+' DA'}
+function render(){let t=0;document.getElementById('inv').innerHTML=cart.map(c=>{let m=c.price*c.qty;t+=m;return `<div class="row ${c.qty>=c.stock?'low':''}"><div style="flex:2;text-align:right">${c.name}</div><div>${c.qty}</div><div>${c.price}</div><div>${m}</div></div>`}).join('');if(disc>0)t=t-t*disc/100;document.getElementById('total').textContent=t.toFixed(2).replace('.',',');document.getElementById('t1').textContent=cart.length+' da';document.getElementById('t2').textContent=t;if(cart.length)document.getElementById('prix').value=cart[cart.length-1].price}
 function addByScan(){let v=document.getElementById('codeIn').value.trim().toUpperCase();if(!v)return;add(v);document.getElementById('codeIn').value=''}
-function genBarcode(){ // كودبار فريد لكل زبون
- let n=clients.length+1;
- return 'C'+String(n).padStart(6,'0')+Date.now().toString().slice(-2); // مثلا C00000125
-}
-function addClient(){
- let name=document.getElementById('cName').value.trim(), phone=document.getElementById('cPhone').value.trim();
- if(!name)return alert('اكتب اسم الزبون');
- let barcode=genBarcode();
- // تأكد ما يتكررش
- while(clients.some(c=>c.barcode===barcode)){barcode=genBarcode()}
- let cl={id:Date.now(),name:name,phone:phone,barcode:barcode,debt:0,history:[]};
- clients.push(cl);lastAdded=cl;saveAll();
- document.getElementById('newClientBox').style.display='block';
- document.getElementById('newName').textContent=name;
- document.getElementById('bcNewText').textContent=barcode;
- try{JsBarcode("#bcNew",barcode,{format:"CODE128",width:1.8,height:60,displayValue:true,fontSize:14,margin:2});}catch(e){}
- document.getElementById('cName').value='';document.getElementById('cPhone').value='';
- renderClients();
-}
+function genBC(){return 'C'+String(clients.length+1).padStart(6,'0')+Date.now().toString().slice(-2)}
+function addClient(){let n=document.getElementById('cName').value.trim(),ph=document.getElementById('cPhone').value.trim();if(!n)return alert('الاسم');let bc=genBC();while(clients.some(c=>c.barcode===bc))bc=genBC();let cl={id:Date.now(),name:n,phone:ph,barcode:bc,debt:0,history:[]};clients.push(cl);lastAdded=cl;save();document.getElementById('newBox').style.display='block';document.getElementById('newName').textContent=n;document.getElementById('bcNewTxt').textContent=bc;try{JsBarcode("#bcNew",bc,{format:"CODE128",width:1.6,height:50,displayValue:true})}catch(e){}document.getElementById('cName').value='';document.getElementById('cPhone').value='';renderClients()}
+function printCard(cl){let w=window.open('','','width=380,height=550');w.document.write(`<html dir=rtl><head><meta charset="UTF-8"><style>body{font-family:Tahoma;text-align:center;padding:15px}.card{border:2px solid #000;border-radius:14px;padding:15px} svg{width:100%}</style></head><body><div class="card"><h2>🛒 حانوت برو</h2><h3>${cl.name}</h3><p>${cl.phone}</p><svg id="b"></svg><h3 style="font-family:monospace">${cl.barcode}</h3><p style="color:red">الدين: ${cl.debt} DA</p></div><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><script>JsBarcode("#b","${cl.barcode}",{format:"CODE128",width:2,height:70,displayValue:true});setTimeout(()=>{window.print();window.close()},400)<\/script></body></html>`)}
 function printLast(){if(lastAdded)printCard(lastAdded)}
-function printCard(cl){
- let w=window.open('','','width=380,height=550');
- w.document.write(`<html dir=rtl><head><meta charset="UTF-8"><style>body{font-family:Tahoma;text-align:center;padding:15px}.card{border:2px solid #000;border-radius:14px;padding:15px} svg{width:100%}</style></head><body><div class="card"><h2>🛒 حانوت برو</h2><h3>${cl.name}</h3><p>📞 ${cl.phone}</p><svg id="b"></svg><h3 style="font-family:monospace">${cl.barcode}</h3><p style="color:red;font-weight:bold">الدين: ${cl.debt} DA</p><small>امسح الكود عند الكاشير</small></div><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><script>JsBarcode("#b","${cl.barcode}",{format:"CODE128",width:2,height:70,displayValue:true});setTimeout(()=>{window.print();window.close()},400)<\/script></body></html>`);
-}
-function printAllBarcodes(){
- if(!clients.length)return alert('لا يوجد زبائن');
- let w=window.open('','','width=800,height=600');
- let html=clients.map((cl,i)=>`<div style="border:1px solid #000;border-radius:8px;padding:8px;width:48%;display:inline-block;margin:4px;text-align:center"><b>${cl.name}</b><br><small>${cl.phone}</small><br><svg id="b${i}"></svg><br><small style="font-family:monospace">${cl.barcode}</small><br><small style="color:red">دين: ${cl.debt} DA</small></div>`).join('');
- w.document.write(`<html dir=rtl><head><meta charset="UTF-8"></head><body>${html}<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><script>${clients.map((c,i)=>`JsBarcode("#b${i}","${c.barcode}",{format:"CODE128",width:1.2,height:40,displayValue:false});`).join('')}setTimeout(()=>{window.print()},800)<\/script></body></html>`);
-}
-function renderClients(){
- let q=(document.getElementById('searchClient').value||'').toLowerCase();
- let filtered=clients.filter(c=>c.name.toLowerCase().includes(q)||c.barcode.toLowerCase().includes(q)||c.phone.includes(q));
- document.getElementById('clientList').innerHTML=filtered.map(c=>`
- <div class="cItem">
-  <div style="flex:1;cursor:pointer" onclick="selectClient(${c.id})"><b>${c.name}</b> <span style="font-family:monospace;background:#ffeb00;padding:1px 5px;border-radius:4px;font-size:11px">${c.barcode}</span><br><small>📞 ${c.phone} | <span style="color:${c.debt>0?'red':'green'}">دين ${c.debt} DA</span></small></div>
-  <div style="display:flex;flex-direction:column;gap:3px"><button onclick="printCard(clients.find(x=>x.id===${c.id}))" style="background:#ffeb00;border:0;padding:5px 8px;border-radius:5px;font-size:11px">🖨️ بطاقة</button><button onclick="selectClient(${c.id})" style="background:#0044ff;color:#fff;border:0;padding:5px 8px;border-radius:5px;font-size:11px">✅ اختيار</button></div>
- </div>`).join('')||'<div style="padding:12px;text-align:center;color:#888">لا يوجد زبائن - أضف أول زبون فوق</div>';
-}
+function printCurrentCard(){if(selectedClient)printCard(selectedClient)}
+function printAll(){if(!clients.length)return alert('لا يوجد زبائن');let w=window.open('','','width=800');let h=clients.map((c,i)=>`<div style="border:1px solid #000;border-radius:8px;padding:6px;width:48%;display:inline-block;margin:3px;text-align:center"><b>${c.name}</b><br><svg id="b${i}"></svg><br><small>${c.barcode}</small></div>`).join('');w.document.write(`<html dir=rtl><body>${h}<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><script>${clients.map((c,i)=>`JsBarcode("#b${i}","${c.barcode}",{format:"CODE128",width:1.2,height:35,displayValue:false});`).join('')}setTimeout(()=>{window.print()},800)<\/script></body></html>`)}
+function renderClients(){let q=(document.getElementById('searchClient').value||'').toLowerCase();let f=clients.filter(c=>c.name.toLowerCase().includes(q)||c.barcode.toLowerCase().includes(q));document.getElementById('clientList').innerHTML=f.map(c=>`<div style="display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #eee"><div style="flex:1;cursor:pointer" onclick="selectClient(${c.id})"><b>${c.name}</b> <span style="font-family:monospace;background:#ffeb00;padding:1px 4px;border-radius:3px;font-size:10px">${c.barcode}</span><br><small>${c.phone} - <span style="color:${c.debt>0?'red':'green'}">${c.debt} DA</span></small></div><div style="display:flex;flex-direction:column;gap:2px"><button onclick="printCard(clients.find(x=>x.id===${c.id}))" style="background:#ffeb00;border:0;padding:4px;border-radius:4px;font-size:10px">🖨️</button><button onclick="selectClient(${c.id})" style="background:#0044ff;color:#fff;border:0;padding:4px;border-radius:4px;font-size:10px">✅</button></div></div>`).join('')||'<div style="padding:10px;text-align:center;color:#888">لا يوجد</div>'}
 function selectClient(id){selectedClient=clients.find(c=>c.id===id);document.getElementById('clientBar').style.display='flex';document.getElementById('clientName').textContent='👤 '+selectedClient.name+' ['+selectedClient.barcode+']';document.getElementById('clientDebt').textContent='دين: '+selectedClient.debt+' DA';closeM()}
 function clearClient(){selectedClient=null;document.getElementById('clientBar').style.display='none'}
 function openClientModal(){document.getElementById('mClients').style.display='flex';renderClients()}
-function openStock(){document.getElementById('stockList').innerHTML=all.map(p=>`<div style="display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid #eee"><span>${p.name} (${p.code}) - ${p.stock}</span></div>`).join('');document.getElementById('mStock').style.display='flex'}
+function openStock(){let low=checkLow();document.getElementById('lowBox').innerHTML=low.length?`🚨 ${low.length} سلعة ناقصة:<br>`+low.map(p=>`• ${p.name} باقي ${p.stock} (حد ${p.min})`).join('<br>'):'✅ المخزون جيد';document.getElementById('stockList').innerHTML=all.map(p=>`<div style="display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid #eee;${p.stock<=p.min?'background:#ffdddd':''}"><span>${p.name} (${p.code})</span><span>${p.stock} ${p.stock<=p.min?'🚨':''}</span><button onclick="restock('${p.code}')" style="background:#00a000;color:#fff;border:0;padding:2px 6px;border-radius:4px">+10</button></div>`).join('');document.getElementById('mStock').style.display='flex'}
+function restock(code){let p=all.find(x=>x.code===code);if(p){p.stock+=10;save();draw();openStock()}}
 function openAdd(){document.getElementById('mAdd').style.display='flex'}
 function closeM(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
-function saveAdd(){let n=document.getElementById('aName').value,c=document.getElementById('aCode').value,p=parseInt(document.getElementById('aPrice').value),qt=parseInt(document.getElementById('aQty').value)||0,mn=parseInt(document.getElementById('aMin').value)||5;if(!n||!c||!p)return alert('كمل');let np={code:c,name:n,price:p,stock:qt,min:mn};all.push(np);pages[cur].push(np);saveAll();draw();closeM()}
+function saveAdd(){let n=document.getElementById('aName').value,c=document.getElementById('aCode').value,pr=parseInt(document.getElementById('aPrice').value),qt=parseInt(document.getElementById('aQty').value)||0,mn=parseInt(document.getElementById('aMin').value)||5;if(!n||!c||!pr)return alert('كمل');let np={code:c,name:n,price:pr,stock:qt,min:mn,img:''};all.push(np);pages[cur].push(np);save();draw();closeM()}
 function switchPage(n){cur=n;draw()}
+function showDivers(){switchPage(3)}
+function filterPain(){let pain=all.filter(p=>p.name.includes('خبز')||p.code.startsWith('A1')||p.code.startsWith('A2'));document.getElementById('grid').innerHTML=pain.map(p=>`<div class="prod ${p.stock<=p.min?'low':''}" onclick="add('${p.code}')"><div class="c">${p.code}</div><div class="q ${p.stock<=p.min?'r':''}">${p.stock}</div><div style="height:42px;background:#333;display:flex;align-items:center;justify-content:center">🍞</div><div class="n">${p.name}</div><div class="pr">${p.price}</div></div>`).join('')}
 function doRetour(){cart.pop();render()}
-function clearCart(){if(confirm('تفرغ؟')){cart=[];render()}}
-function sell(isDebt){
- if(!cart.length)return alert('السلة فارغة');
- let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
- if(isDebt){if(!selectedClient)return alert('اختر زبون من 👥 أولا');selectedClient.debt+=tot;selectedClient.history.push({date:new Date().toLocaleString(),amount:tot});saveAll();}
- cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});saveAll();draw();
- let w=window.open('','','width=320,height=500');let cli=selectedClient?`زبون: ${selectedClient.name} (${selectedClient.barcode})<br>`:'';w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>${isDebt?'دين':'نقدي'}</h3>${cli}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty}</span></div>`).join('')}<hr><h2>${tot} DA</h2><script>window.print();window.close()<\/script></body></html>`);cart=[];render();
+function changeQty(d){let e=document.getElementById('qte');e.value=Math.max(1,parseInt(e.value)+d)}
+function openRemise(){document.getElementById('mRem').style.display='flex'}
+function applyRem(){disc=parseInt(document.getElementById('remVal').value)||0;render();closeM()}
+function openTiroir(){if(navigator.vibrate)navigator.vibrate(200);alert('🔓 Tiroir ouvert')}
+function showBilan(){let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);let debtTot=clients.reduce((s,c)=>s+c.debt,0);document.getElementById('bilTxt').innerHTML=`مواد في السلة: ${cart.length}<br>مجموع: ${tot} DA<br>تخفيض: ${disc}%<br>الصافي: ${tot-tot*disc/100} DA<br><hr>عدد الزبائن: ${clients.length}<br>مجموع الديون: <b style="color:red">${debtTot} DA</b><br>سلع ناقصة: ${checkLow().length}<br><br>${new Date().toLocaleString()}`;document.getElementById('mBil').style.display='flex'}
+function balance(){let q=prompt('الوزن بالكلغ:');if(q)document.getElementById('qte').value=q}
+function printInv(){
+ if(!cart.length)return alert('فارغة');
+ let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);if(disc>0)tot=tot-tot*disc/100;
+ cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});save();draw();
+ let w=window.open('','','width=320,height=600');let cli=selectedClient?`زبون: ${selectedClient.name} (${selectedClient.barcode})<br>دين: ${selectedClient.debt} DA<br>`:'';w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>فاتورة</h3>${cli}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} DA</span></div>`).join('')}<hr><h2>${tot} DA</h2><p>${new Date().toLocaleString()}</p><script>window.print();window.close()<\/script></body></html>`);
+ document.getElementById('bons').innerHTML+='<br>'+new Date().toLocaleTimeString();cart=[];disc=0;render();
 }
 document.getElementById('codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')addByScan()});
-draw();render();updateCount();
+draw();render();save();
 </script></body></html>
