@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hanout PRO V11 - FULL + BACKUP</title>
+<title>Hanout V12 - VENTE + FACTURES</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;font-family:Tahoma}body{background:#0a0a0a;color:#fff;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
@@ -10,7 +10,7 @@
 .ibtn.alert{background:red;color:#fff;animation:blink 0.8s infinite}
 .ibtn.exp{background:orange;color:#fff;animation:blink 0.8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
-.price{font-size:42px;color:#00ff18;font-weight:900;text-shadow:0 0 10px #00ff18}
+.price{font-size:42px;color:#00ff18;font-weight:900}
 .red{background:#c00000;display:flex;gap:3px;padding:5px;align-items:center;flex-wrap:wrap;font-size:11px}
 .red input{padding:7px;border:0;border-radius:4px}
 .code{flex:1;min-width:110px;background:#fff9c4;font-weight:bold}
@@ -26,7 +26,8 @@
 .alert.low{background:red;color:#fff;animation:blink 1s infinite}
 .alert.expA{background:orange;color:#000;animation:blink 1s infinite}
 .client{background:#005500;color:#fff;padding:4px 6px;display:flex;justify-content:space-between;font-size:11px}
-.mid{width:14%;background:#0f0f0f;overflow:auto;font-size:9px;color:#00d8ff;padding:3px;line-height:1.5}
+.mid{width:14%;background:#0f0f0f;overflow:auto;font-size:9px;color:#00d8ff;padding:3px;line-height:1.5;cursor:pointer}
+.mid:hover{background:#1a1a1a}
 .right{width:48%;background:#000;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;overflow:auto;align-content:start}
 .prod{background:linear-gradient(#2a2a2a,#111);border:1px solid #444;border-radius:5px;padding:2px;text-align:center;cursor:pointer;height:84px;position:relative}
 .prod.shortcut{border:1px dashed #ffeb00;background:#2a2500}
@@ -41,20 +42,21 @@
 .prod .q{position:absolute;top:1px;right:1px;background:#ffeb00;color:#000;font-size:7px;padding:1px 3px;font-weight:bold;border-radius:3px}
 .prod .q.r{background:red;color:#fff}
 .prod .expB{position:absolute;top:14px;right:1px;background:orange;color:#000;font-size:6px;padding:1px 2px;border-radius:3px}
-.bottom{background:#b00000;display:flex;justify-content:space-around;padding:3px;font-size:8px;flex-wrap:wrap;gap:1px}
-.b{cursor:pointer;padding:4px 3px;border-radius:4px;text-align:center;min-width:48px}
+.bottom{background:#b00000;display:flex;flex-direction:column;gap:2px;padding:3px}
+.b-row{display:flex;justify-content:space-around;gap:2px;flex-wrap:wrap}
+.b{cursor:pointer;padding:5px 4px;border-radius:5px;text-align:center;min-width:52px;font-size:9px;background:rgba(0,0,0,0.2)}
+.b.vente{background:#00a000;color:#fff;font-weight:bold;border:2px solid #0f0;min-width:75px;font-size:11px}
+.b.credit{background:#aa0000;color:#fff;font-weight:bold;border:2px solid #ff0000;min-width:75px;font-size:11px}
 .b:hover{background:rgba(255,255,255,0.2)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.93);display:none;align-items:center;justify-content:center;z-index:99;padding:6px}
-.box{background:#fff;color:#000;padding:12px;border-radius:10px;width:98%;max-width:500px;max-height:96vh;overflow:auto}
+.box{background:#fff;color:#000;padding:12px;border-radius:10px;width:98%;max-width:520px;max-height:96vh;overflow:auto}
 .box input,.box select{width:100%;padding:9px;margin:4px 0;border:2px solid #ddd;border-radius:6px}
 .btn{padding:10px;border:0;border-radius:6px;font-weight:bold;width:100%;cursor:pointer;margin-top:5px}
 .bc{background:#fff;border:2px dashed #000;border-radius:8px;padding:8px;text-align:center;margin:6px 0}
-.cList{max-height:320px;overflow:auto;border:1px solid #ddd;border-radius:6px}
+.cList{max-height:340px;overflow:auto;border:1px solid #ddd;border-radius:6px}
 .codeRow{display:flex;gap:4px;align-items:center}
-.codeRow input{flex:1}
 .scanBtn{background:#000;color:#0f0;border:0;padding:9px 10px;border-radius:8px;font-size:16px;cursor:pointer}
-.scanBtn.active{background:#0f0;color:#000;animation:blink 0.5s infinite}
-@media(max-width:768px){.main{flex-direction:column}.left{width:100%;height:36%}.mid{display:none}.right{width:100%;height:44%}.price{font-size:30px}.bottom{font-size:7px}}
+@media(max-width:768px){.main{flex-direction:column}.left{width:100%;height:36%}.mid{display:none}.right{width:100%;height:44%}.price{font-size:28px}}
 </style></head><body>
 
 <div class="top">
@@ -67,8 +69,8 @@
 <div class="ibtn" onclick="openStock()" id="stockBtn">👁️</div>
 <div class="ibtn" onclick="openExpiry()" id="expBtn" style="display:none;background:orange;color:#fff">⏰</div>
 <div class="ibtn" id="alertBtn" style="display:none;background:red;color:#fff">🚨</div>
-<div class="ibtn" onclick="exportBackup()" style="background:#00a000;color:#fff" title="نسخ">💾</div>
-<div class="ibtn" onclick="importBackup()" style="background:#ff6600;color:#fff" title="استرجاع">📥</div>
+<div class="ibtn" onclick="openBons()" style="background:#00d8ff;color:#000">📜</div>
+<div class="ibtn" onclick="exportBackup()" style="background:#00a000;color:#fff">💾</div>
 </div>
 <div style="display:flex;align-items:center;gap:6px"><div class="price" id="total">0,00</div><span style="color:#00ff18;font-weight:bold">DA</span></div>
 </div>
@@ -87,11 +89,12 @@
 
 <div class="main">
 <div class="left"><div class="hdr"><span style="flex:2">Article</span><span>Qte</span><span>Prix_Vt</span><span>Montant</span></div><div class="inv" id="inv"></div><div class="totY"><span id="t1">0 da</span><span id="t2">0</span><span>da</span></div></div>
-<div class="mid" id="bons"><b>Liste des Bons</b><br>17:39:48<br>17:38:31<br>17:36:10</div>
+<div class="mid" id="bons" onclick="openBons()"><b>📜 Liste des Bons (اضغط)</b><br><div id="bonsMini"></div></div>
 <div class="right" id="grid"></div>
 </div>
 
 <div class="bottom">
+<div class="b-row">
 <div class="b" onclick="openAdd()">📦<br>Ajouter</div>
 <div class="b" onclick="printInv()">🖨️<br>Imprimé</div>
 <div class="b" onclick="showDivers()">⬇️<br>Divers</div>
@@ -100,43 +103,62 @@
 <div class="b" onclick="switchPage(2)">PAGE 02</div>
 <div class="b" onclick="switchPage(3)">PAGE 03</div>
 <div class="b" onclick="switchPage(4)">PAGE 04</div>
+</div>
+<div class="b-row">
 <div class="b" onclick="filterPain()">PAIN OEUF</div>
 <div class="b" onclick="changeQty(1)">➕</div>
 <div class="b" onclick="changeQty(-1)">➖</div>
 <div class="b" onclick="openRemise()">🏷️%<br>Remise</div>
 <div class="b" onclick="openTiroir()">🗄️<br>Ouvrir T</div>
-<div class="b" onclick="openClientModal()" style="background:#0044ff;color:#fff">👥<br>Clients (<span id="cntCli">0</span>)</div>
-<div class="b" onclick="exportBackup()" style="background:#006600;color:#fff">💾<br>نسخ</div>
-<div class="b" onclick="importBackup()" style="background:#ff6600;color:#fff">📥<br>استرجاع</div>
+<div class="b vente" onclick="sell(false)">💵<br>Vente نقدي</div>
+<div class="b credit" onclick="sell(true)">📒<br>Crédit دين</div>
+<div class="b" onclick="openBons()" style="background:#00d8ff;color:#000">📜<br>Bons (<span id="cntBons">0</span>)</div>
+</div>
+<div class="b-row">
+<div class="b" onclick="openClientModal()" style="background:#0044ff;color:#fff">👥 Clients (<span id="cntCli">0</span>)</div>
+<div class="b" onclick="exportBackup()" style="background:#006600;color:#fff">💾 نسخ</div>
+<div class="b" onclick="importBackup()" style="background:#ff6600;color:#fff">📥 استرجاع</div>
+<div class="b" onclick="clearCart()" style="background:#333;color:#fff">🗑️<br>Vider</div>
+</div>
 </div>
 
-<div class="modal" id="mSearch"><div class="box"><h3>🔍 بحث سريع + تعديل</h3><input id="searchInput" placeholder="كود، باركود، أو اسم..." oninput="doSearch()" autofocus><div id="searchResults" class="cList" style="margin-top:8px;max-height:360px"></div><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
+<!-- BONS / FACTURES MODAL - NEW -->
+<div class="modal" id="mBons"><div class="box" style="max-width:600px">
+<h3>📜 سجل الفواتير - كل المبيعات</h3>
+<div style="display:flex;gap:4px;margin:6px 0"><input id="searchBon" placeholder="🔍 بحث بالزبون أو التاريخ..." oninput="renderBons()" style="flex:1"><button onclick="exportBons()" style="background:#000;color:#fff;border:0;padding:6px 10px;border-radius:6px;font-size:11px">📊 Excel</button></div>
+<div style="background:#e8f3ff;padding:6px;border-radius:6px;font-size:12px;display:flex;justify-content:space-between"><span>مجموع اليوم: <b id="todayTotal">0 DA</b></span><span>عدد الفواتير: <b id="todayCount">0</b></span></div>
+<div id="bonsList" class="cList" style="max-height:400px;margin-top:6px"></div>
+<button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button>
+</div></div>
+
+<div class="modal" id="mSearch"><div class="box"><h3>🔍 بحث سريع</h3><input id="searchInput" placeholder="كود، باركود، أو اسم..." oninput="doSearch()" autofocus><div id="searchResults" class="cList" style="margin-top:8px;max-height:360px"></div><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
 <div class="modal" id="mExpiry"><div class="box"><h3>⏰ الصلاحية</h3><div style="display:flex;gap:4px;align-items:center;margin:6px 0"><span>تنبيه قبل:</span><input id="expDays" type="number" value="30" style="width:70px"><span>يوم</span><button onclick="saveExpDays()" style="background:orange;border:0;padding:6px 10px;border-radius:6px">💾</button></div><div id="expList" class="cList"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
 <div class="modal" id="mStock"><div class="box"><h3>📦 المخزون</h3><div id="lowBox" style="background:#ffdddd;padding:6px;border-radius:6px;margin:6px 0;font-size:12px"></div><div id="stockList" class="cList"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
-<div class="modal" id="mClients"><div class="box"><h3>👥 الزبائن - كل واحد كودبار</h3><div style="background:#e8f3ff;padding:8px;border-radius:8px"><div style="display:flex;gap:4px"><input id="cName" placeholder="اسم زبون جديد" style="flex:2"><input id="cPhone" placeholder="هاتف" style="flex:1"></div><button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون</button><div id="newBox" style="display:none" class="bc"><div>✅ <b id="newName"></b></div><svg id="bcNew"></svg><div id="bcNewTxt" style="font-family:monospace;font-weight:bold"></div><button class="btn" style="background:#ffeb00;color:#000;padding:6px" onclick="printLast()">🖨️ طباعة</button></div></div><div style="display:flex;gap:4px;margin-top:8px"><input id="searchClient" placeholder="🔍 بحث زبون..." oninput="renderClients()" style="flex:1"><button onclick="printAll()" style="background:#000;color:#fff;border:0;padding:6px 8px;border-radius:6px;font-size:10px">🖨️ كل البطاقات</button></div><div id="clientList" class="cList" style="margin-top:6px"></div><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
-<div class="modal" id="mAdd"><div class="box"><h3 id="addTitle">➕ سلعة جديدة</h3><input id="aName" placeholder="اسم السلعة *"><label style="font-size:12px;font-weight:bold">Code / كودبار (اختياري - فارغ = اختصار):</label><div class="codeRow"><input id="aCode" placeholder="فارغ=⭐ اختصار | مملوء=🔍 باركود"><button class="scanBtn" id="scanBtn" onclick="startScanCode()">📷<br><span style="font-size:9px">سكان</span></button></div><div style="background:#e8f3ff;padding:6px;border-radius:6px;font-size:11px;margin:4px 0" id="codeHint">💡 فارغ=⭐ اختصارات | مملوء=🔍 سكانير</div><div style="display:flex;gap:4px"><input id="aPrice" type="number" placeholder="سعر البيع *"><input id="aBuyPrice" type="number" placeholder="سعر الشراء"></div><div style="display:flex;gap:4px"><input id="aQty" type="number" placeholder="الكمية"><input id="aMin" type="number" placeholder="حد الإنذار"></div><label style="font-size:12px;font-weight:bold">📅 تاريخ الصلاحية (اختياري):</label><input id="aExp" type="date"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">💾 حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
+<div class="modal" id="mClients"><div class="box"><h3>👥 الزبائن</h3><div style="background:#e8f3ff;padding:8px;border-radius:8px"><div style="display:flex;gap:4px"><input id="cName" placeholder="اسم" style="flex:2"><input id="cPhone" placeholder="هاتف" style="flex:1"></div><button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون</button><div id="newBox" style="display:none" class="bc"><div>✅ <b id="newName"></b></div><svg id="bcNew"></svg><div id="bcNewTxt" style="font-family:monospace;font-weight:bold"></div><button class="btn" style="background:#ffeb00;color:#000;padding:6px" onclick="printLast()">🖨️ طباعة</button></div></div><div style="display:flex;gap:4px;margin-top:8px"><input id="searchClient" placeholder="🔍 بحث زبون..." oninput="renderClients()" style="flex:1"></div><div id="clientList" class="cList" style="margin-top:6px"></div><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
+<div class="modal" id="mAdd"><div class="box"><h3 id="addTitle">➕ سلعة جديدة</h3><input id="aName" placeholder="اسم السلعة *"><label style="font-size:12px;font-weight:bold">Code / كودبار (فارغ = اختصار):</label><div class="codeRow"><input id="aCode" placeholder="فارغ=⭐ اختصار | مملوء=🔍 باركود"><button class="scanBtn" id="scanBtn" onclick="startScanCode()">📷 سكان</button></div><div style="background:#e8f3ff;padding:6px;border-radius:6px;font-size:11px;margin:4px 0" id="codeHint">💡 فارغ=⭐ اختصارات</div><div style="display:flex;gap:4px"><input id="aPrice" type="number" placeholder="سعر البيع *"><input id="aBuyPrice" type="number" placeholder="سعر الشراء"></div><div style="display:flex;gap:4px"><input id="aQty" type="number" placeholder="الكمية"><input id="aMin" type="number" placeholder="حد الإنذار"></div><label style="font-size:12px;font-weight:bold">📅 تاريخ الصلاحية:</label><input id="aExp" type="date"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">💾 حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
 <div class="modal" id="mRem"><div class="box"><h3>% Remise</h3><input id="remVal" type="number" placeholder="10"><button class="btn" style="background:#000;color:#fff" onclick="applyRem()">تطبيق</button><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
-<div class="modal" id="mBil"><div class="box"><h3>📊 Bilan + Backup</h3><div id="bilTxt" style="line-height:1.8"></div><div style="display:flex;gap:4px;margin-top:8px"><button class="btn" style="background:#006600;color:#fff;flex:1" onclick="exportBackup()">💾 تصدير نسخة</button><button class="btn" style="background:#ff6600;color:#fff;flex:1" onclick="importBackup()">📥 استرجاع</button></div><div style="background:#e8f3ff;padding:6px;border-radius:6px;font-size:11px;margin-top:6px" id="backupInfo"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
+<div class="modal" id="mBil"><div class="box"><h3>📊 Bilan</h3><div id="bilTxt" style="line-height:1.8"></div><div style="display:flex;gap:4px;margin-top:8px"><button class="btn" style="background:#006600;color:#fff;flex:1" onclick="exportBackup()">💾 نسخة</button><button class="btn" style="background:#00a000;color:#fff;flex:1" onclick="openBons()">📜 فواتير</button></div><div style="background:#e8f3ff;padding:6px;border-radius:6px;font-size:11px;margin-top:6px" id="backupInfo"></div><button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button></div></div>
 
 <script>
 let pages={1:[{code:'A1',name:'خبز عادي',price:10,buy:7,stock:20,min:5,exp:'',barcode:'',img:''},{code:'A2',name:'بيض',price:20,buy:15,stock:3,min:10,exp:'2026-12-15',barcode:'',img:''},{code:'A3',name:'خبز بريوش',price:20,buy:12,stock:25,min:5,exp:'',barcode:'',img:''},{code:'A4',name:'خبز سميد',price:20,buy:12,stock:2,min:5,exp:'2026-11-25',barcode:'',img:''}],2:[{code:'B1',name:'زيت 5ل',price:650,buy:600,stock:12,min:3,exp:'2026-12-01',barcode:'6131580000013',img:''}],3:[],4:[]};
 let cur=1,cart=[],selectedClient=null,lastAdded=null,disc=0,editTarget=null,scanMode=false;
-let all=JSON.parse(localStorage.getItem('allV11')||'null')||[...pages[1],...pages[2],...pages[3],...pages[4]];
-let clients=JSON.parse(localStorage.getItem('cliV11')||'[]');
+let all=JSON.parse(localStorage.getItem('allV12')||'null')||[...pages[1],...pages[2],...pages[3],...pages[4]];
+let clients=JSON.parse(localStorage.getItem('cliV12')||'[]');
+let bons=JSON.parse(localStorage.getItem('bonsV12')||'[]');
 let expDays=parseInt(localStorage.getItem('expDays')||'30');
 
-function save(){localStorage.setItem('allV11',JSON.stringify(all));localStorage.setItem('cliV11',JSON.stringify(clients));localStorage.setItem('expDays',expDays);localStorage.setItem('pagesV11',JSON.stringify(pages));document.getElementById('cntCli').textContent=clients.length;document.getElementById('expDays').value=expDays;autoBackup()}
+function save(){localStorage.setItem('allV12',JSON.stringify(all));localStorage.setItem('cliV12',JSON.stringify(clients));localStorage.setItem('bonsV12',JSON.stringify(bons));localStorage.setItem('expDays',expDays);localStorage.setItem('pagesV12',JSON.stringify(pages));document.getElementById('cntCli').textContent=clients.length;document.getElementById('cntBons').textContent=bons.length;document.getElementById('expDays').value=expDays;autoBackup();renderBonsMini()}
 function daysLeft(exp){if(!exp)return 9999;return Math.ceil((new Date(exp)-new Date())/86400000)}
 function checkAlerts(){let low=all.filter(p=>p.stock<=p.min);let expiring=all.filter(p=>{let d=daysLeft(p.exp);return p.exp&&d>=0&&d<=expDays});document.getElementById('alertLow').style.display=low.length?'block':'none';document.getElementById('lowCount').textContent=low.length;document.getElementById('alertBtn').style.display=low.length?'flex':'none';document.getElementById('stockBtn').className=low.length?'ibtn alert':'ibtn';document.getElementById('alertExp').style.display=expiring.length?'block':'none';document.getElementById('expCount').textContent=expiring.length;document.getElementById('expBtn').style.display=expiring.length?'flex':'none';return {low,expiring}}
 function draw(){let list=pages[cur]&&pages[cur].length?pages[cur]:all.filter(p=>!p.barcode);document.getElementById('grid').innerHTML=list.map(p=>{let d=daysLeft(p.exp);let isLow=p.stock<=p.min;let isOut=p.stock<=0;let isExp=p.exp&&d>=0&&d<=expDays;let isExpired=p.exp&&d<0;let isShortcut=!p.barcode;return `<div class="prod ${isShortcut?'shortcut':''} ${p.barcode?'barcode':''} ${isLow?'low':''} ${isExp||isExpired?'exp':''} ${isOut?'out':''}" onclick="add('${p.code}')" ondblclick="editProduct('${p.code}')"><div style="height:42px;background:${isShortcut?'#2a2500':'#333'};display:flex;align-items:center;justify-content:center;font-size:16px">${isExpired?'💀':isExp?'⏰':isOut?'⛔':isShortcut?'⭐':'📦'}</div><div class="n">${p.name}</div><div class="c ${isShortcut?'s':''}">${p.barcode? '🔍'+p.barcode.slice(-4): p.code}</div><div class="pr">${p.price}</div><div class="q ${isLow?'r':''}">${p.stock}</div>${p.exp?`<div class="expB">${d<0?'END':d+'ي'}</div>`:''}</div>`}).join('');checkAlerts()}
 function add(code){let pr=all.find(x=>x.code===code||x.barcode===code||(x.barcode&&x.barcode.toLowerCase()===code.toLowerCase())||x.name.toLowerCase().includes(code.toLowerCase()));if(!pr){let cl=clients.find(c=>c.barcode===code||c.barcode.toLowerCase()===code.toLowerCase());if(cl){selectClient(cl.id);return}return openSearch(code)}if(pr.stock<=0)return alert('⛔ نفد: '+pr.name);let q=parseInt(document.getElementById('qte').value)||1;if(q>pr.stock)return alert('باقي: '+pr.stock);let ex=cart.find(x=>x.code===pr.code);if(ex){if(ex.qty+q>pr.stock)return alert('تجاوزت');ex.qty+=q}else cart.push({...pr,qty:q});render()}
 function render(){let t=0;document.getElementById('inv').innerHTML=cart.map(c=>{let m=c.price*c.qty;t+=m;return `<div class="row"><div style="flex:2;text-align:right">${c.name}</div><div>${c.qty}</div><div>${c.price}</div><div>${m}</div></div>`}).join('');if(disc>0)t=t-t*disc/100;document.getElementById('total').textContent=t.toFixed(2).replace('.',',');document.getElementById('t1').textContent=cart.length+' da';document.getElementById('t2').textContent=t;if(cart.length)document.getElementById('prix').value=cart[cart.length-1].price}
 function addByScan(){let v=document.getElementById('codeIn').value.trim().toUpperCase();if(!v)return;add(v);document.getElementById('codeIn').value=''}
-function startScanCode(){let btn=document.getElementById('scanBtn');scanMode=!scanMode;if(scanMode){btn.classList.add('active');btn.innerHTML='⏳<br><span style="font-size:9px">اسكاني</span>';document.getElementById('aCode').placeholder='ضع السكانير الآن...';document.getElementById('aCode').focus();document.getElementById('codeHint').innerHTML='📷 <b>وضع السكان جاهز</b> - امسح المنتج الآن';setTimeout(()=>{if(scanMode){scanMode=false;btn.classList.remove('active');btn.innerHTML='📷<br><span style="font-size:9px">سكان</span>'}},15000)}else{btn.classList.remove('active');btn.innerHTML='📷<br><span style="font-size:9px">سكان</span>'}}
+function startScanCode(){let btn=document.getElementById('scanBtn');scanMode=!scanMode;if(scanMode){btn.classList.add('active');btn.innerHTML='⏳ اسكاني';document.getElementById('aCode').focus();}else{btn.classList.remove('active');btn.innerHTML='📷 سكان'}}
 function openSearch(q=''){document.getElementById('mSearch').style.display='flex';if(q)document.getElementById('searchInput').value=q;doSearch(q)}
-function doSearch(preset=''){let q=(preset||document.getElementById('searchInput').value||'').toLowerCase();let filtered=all.filter(p=>!q||p.code.toLowerCase().includes(q)||(p.barcode&&p.barcode.includes(q))||p.name.toLowerCase().includes(q));document.getElementById('searchResults').innerHTML=filtered.map(p=>{let isShort=!p.barcode;return `<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee;${isShort?'background:#fffbe6':''}"><div style="flex:1" onclick="selectFromSearch('${p.code}')"><b>${p.name}</b> ${isShort?'<span style="background:#ffeb00;color:#000;padding:1px 4px;border-radius:3px;font-size:9px">⭐ اختصار</span>':'<span style="background:#00ff18;color:#000;padding:1px 4px;border-radius:3px;font-size:9px">🔍 '+p.barcode+'</span>'}<br><small>${p.code} | ${p.price} DA | مخزون ${p.stock}</small></div><div style="display:flex;flex-direction:column;gap:3px"><button onclick="add('${p.code}');closeM()" style="background:#00a000;color:#fff;border:0;padding:5px 8px;border-radius:5px">+ بيع</button><button onclick="editProduct('${p.code}')" style="background:#0044ff;color:#fff;border:0;padding:5px 8px;border-radius:5px">✏️</button></div></div>`}).join('')||'<div style="padding:10px;text-align:center">لا يوجد</div>'}
+function doSearch(preset=''){let q=(preset||document.getElementById('searchInput').value||'').toLowerCase();let filtered=all.filter(p=>!q||p.code.toLowerCase().includes(q)||(p.barcode&&p.barcode.includes(q))||p.name.toLowerCase().includes(q));document.getElementById('searchResults').innerHTML=filtered.map(p=>{let isShort=!p.barcode;return `<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee;${isShort?'background:#fffbe6':''}"><div style="flex:1" onclick="selectFromSearch('${p.code}')"><b>${p.name}</b> ${isShort?'<span style="background:#ffeb00;padding:1px 4px;border-radius:3px;font-size:9px">⭐</span>':'<span style="background:#00ff18;padding:1px 4px;border-radius:3px;font-size:9px">🔍 '+p.barcode+'</span>'}<br><small>${p.code} | ${p.price} DA</small></div><div style="display:flex;flex-direction:column;gap:3px"><button onclick="add('${p.code}');closeM()" style="background:#00a000;color:#fff;border:0;padding:5px 8px;border-radius:5px">+ بيع</button><button onclick="editProduct('${p.code}')" style="background:#0044ff;color:#fff;border:0;padding:5px 8px;border-radius:5px">✏️</button></div></div>`}).join('')||'<div style="padding:10px;text-align:center">لا يوجد</div>'}
 function selectFromSearch(code){add(code);closeM()}
-function editProduct(code){let p=all.find(x=>x.code===code);if(!p)return;editTarget=p;document.getElementById('addTitle').textContent='✏️ تعديل: '+p.name;document.getElementById('aName').value=p.name;document.getElementById('aCode').value=p.barcode||'';document.getElementById('aPrice').value=p.price;document.getElementById('aBuyPrice').value=p.buy||'';document.getElementById('aQty').value=p.stock;document.getElementById('aMin').value=p.min;document.getElementById('aExp').value=p.exp||'';document.getElementById('mAdd').style.display='flex';document.getElementById('codeHint').innerHTML=p.barcode?'🔍 باركود: <b>'+p.barcode+'</b>':'⭐ اختصار (بدون باركود)'}
+function editProduct(code){let p=all.find(x=>x.code===code);if(!p)return;editTarget=p;document.getElementById('addTitle').textContent='✏️ تعديل: '+p.name;document.getElementById('aName').value=p.name;document.getElementById('aCode').value=p.barcode||'';document.getElementById('aPrice').value=p.price;document.getElementById('aBuyPrice').value=p.buy||'';document.getElementById('aQty').value=p.stock;document.getElementById('aMin').value=p.min;document.getElementById('aExp').value=p.exp||'';document.getElementById('mAdd').style.display='flex'}
 function genBC(){return 'C'+String(clients.length+1).padStart(6,'0')+Date.now().toString().slice(-2)}
 function addClient(){let n=document.getElementById('cName').value.trim(),ph=document.getElementById('cPhone').value.trim();if(!n)return alert('الاسم');let bc=genBC();while(clients.some(c=>c.barcode===bc))bc=genBC();let cl={id:Date.now(),name:n,phone:ph,barcode:bc,debt:0,history:[]};clients.push(cl);lastAdded=cl;save();document.getElementById('newBox').style.display='block';document.getElementById('newName').textContent=n;document.getElementById('bcNewTxt').textContent=bc;try{JsBarcode("#bcNew",bc,{format:"CODE128",width:1.6,height:50,displayValue:true})}catch(e){}document.getElementById('cName').value='';document.getElementById('cPhone').value='';renderClients()}
 function printCard(cl){let w=window.open('','','width=380,height=550');w.document.write(`<html dir=rtl><head><meta charset="UTF-8"><style>body{font-family:Tahoma;text-align:center;padding:15px}.card{border:2px solid #000;border-radius:14px;padding:15px} svg{width:100%}</style></head><body><div class="card"><h2>🛒 حانوت برو</h2><h3>${cl.name}</h3><p>${cl.phone}</p><svg id="b"></svg><h3 style="font-family:monospace">${cl.barcode}</h3><p style="color:red">الدين: ${cl.debt} DA</p></div><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><script>JsBarcode("#b","${cl.barcode}",{format:"CODE128",width:2,height:70,displayValue:true});setTimeout(()=>{window.print();window.close()},400)<\/script></body></html>`)}
@@ -151,8 +173,8 @@ function openStock(){let {low}=checkAlerts();document.getElementById('lowBox').i
 function openExpiry(){document.getElementById('mExpiry').style.display='flex';let sorted=[...all].filter(p=>p.exp).sort((a,b)=>daysLeft(a.exp)-daysLeft(b.exp));document.getElementById('expList').innerHTML=sorted.map(p=>{let d=daysLeft(p.exp);return `<div style="display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #eee;${d<0?'background:#ffcccc':d<=expDays?'background:#fff3cd':''}"><div><b>${p.name}</b><br><small>${p.exp} - ${d<0?'منتهي 💀':d+' يوم ⏰'}</small></div><div><button onclick="editProduct('${p.code}')" style="background:#0044ff;color:#fff;border:0;padding:4px 8px;border-radius:4px">✏️</button></div></div>`}).join('')||'<div style="padding:10px;text-align:center">لا يوجد</div>'}
 function saveExpDays(){let v=parseInt(document.getElementById('expDays').value);if(v>=0){expDays=v;save();checkAlerts();openExpiry()}}
 function restock(code){let p=all.find(x=>x.code===code);if(p){p.stock+=10;save();draw();openStock()}}
-function openAdd(){editTarget=null;document.getElementById('addTitle').textContent='➕ سلعة جديدة';['aName','aCode','aPrice','aBuyPrice','aQty','aMin','aExp'].forEach(id=>document.getElementById(id).value='');document.getElementById('codeHint').innerHTML='💡 فارغ=⭐ اختصارات | مملوء=🔍 سكانير';document.getElementById('mAdd').style.display='flex'}
-function closeM(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none');scanMode=false;let btn=document.getElementById('scanBtn');if(btn){btn.classList.remove('active');btn.innerHTML='📷<br><span style="font-size:9px">سكان</span>'}}
+function openAdd(){editTarget=null;document.getElementById('addTitle').textContent='➕ سلعة جديدة';['aName','aCode','aPrice','aBuyPrice','aQty','aMin','aExp'].forEach(id=>document.getElementById(id).value='');document.getElementById('mAdd').style.display='flex'}
+function closeM(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
 function saveAdd(){let n=document.getElementById('aName').value.trim(),c=document.getElementById('aCode').value.trim(),pr=parseInt(document.getElementById('aPrice').value),buy=parseInt(document.getElementById('aBuyPrice').value)||0,qt=parseInt(document.getElementById('aQty').value)||0,mn=parseInt(document.getElementById('aMin').value)||5,exp=document.getElementById('aExp').value;if(!n||!pr)return alert('الاسم والسعر إجباري');let isBarcode=!!c;if(editTarget){editTarget.name=n;editTarget.barcode=c;editTarget.price=pr;editTarget.buy=buy;editTarget.stock=qt;editTarget.min=mn;editTarget.exp=exp}else{let internalCode=c?c:'R'+Date.now().toString().slice(-4);let np={code:internalCode,name:n,price:pr,buy:buy,stock:qt,min:mn,exp:exp,barcode:c,img:''};all.push(np);if(isBarcode){if(!pages[2])pages[2]=[];pages[2].push(np)}else{if(!pages[1])pages[1]=[];pages[1].push(np)}}save();draw();closeM()}
 function switchPage(n){cur=n;draw()}
 function showDivers(){switchPage(3)}
@@ -162,63 +184,94 @@ function changeQty(d){let e=document.getElementById('qte');e.value=Math.max(1,pa
 function openRemise(){document.getElementById('mRem').style.display='flex'}
 function applyRem(){disc=parseInt(document.getElementById('remVal').value)||0;render();closeM()}
 function openTiroir(){if(navigator.vibrate)navigator.vibrate(200);alert('🔓 Tiroir ouvert')}
-function showBilan(){let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);let debtTot=clients.reduce((s,c)=>s+c.debt,0);let {low,expiring}=checkAlerts();let withoutBC=all.filter(p=>!p.barcode).length;let withBC=all.filter(p=>p.barcode).length;let backupTime=localStorage.getItem('autoBackupTime')||'لم يتم بعد';document.getElementById('bilTxt').innerHTML=`مواد: ${cart.length}<br>مجموع: ${tot} DA<br><hr>اختصارات: ${withoutBC}<br>باركود: ${withBC}<br>زبائن: ${clients.length}<br>ديون: <b style="color:red">${debtTot} DA</b><br>ناقصة: ${low.length}<br>صلاحية: ${expiring.length}<br><hr>آخر نسخ تلقائي: ${backupTime}<br><br>${new Date().toLocaleString()}`;document.getElementById('backupInfo').innerHTML=`💾 النسخ التلقائي كل 5 دقائق + عند كل بيع<br>📦 حجم البيانات: ${(JSON.stringify(all).length/1024).toFixed(1)} KB`;document.getElementById('mBil').style.display='flex'}
+function showBilan(){let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);let debtTot=clients.reduce((s,c)=>s+c.debt,0);let {low,expiring}=checkAlerts();let todayBons=bons.filter(b=>b.date.startsWith(new Date().toLocaleDateString()));let todayTot=todayBons.reduce((s,b)=>s+b.total,0);document.getElementById('bilTxt').innerHTML=`مواد: ${cart.length}<br>مجموع: ${tot} DA<br><hr>فواتير اليوم: ${todayBons.length} - ${todayTot} DA<br>كل الفواتير: ${bons.length}<br>اختصارات: ${all.filter(p=>!p.barcode).length}<br>باركود: ${all.filter(p=>p.barcode).length}<br>زبائن: ${clients.length}<br>ديون: <b style="color:red">${debtTot} DA</b><br>ناقصة: ${low.length}<br>صلاحية: ${expiring.length}<br><br>${new Date().toLocaleString()}`;document.getElementById('backupInfo').innerHTML=`💾 حجم البيانات: ${(JSON.stringify(all).length/1024).toFixed(1)} KB<br>📜 آخر فاتورة: ${bons.length?bons[bons.length-1].date:'لا يوجد'}`;document.getElementById('mBil').style.display='flex'}
 function balance(){let q=prompt('الوزن:');if(q)document.getElementById('qte').value=q}
-function printInv(){if(!cart.length)return alert('فارغة');let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);if(disc>0)tot=tot-tot*disc/100;cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});save();let w=window.open('','','width=320,height=600');let cli=selectedClient?`زبون: ${selectedClient.name} (${selectedClient.barcode})<br>`:'';w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>فاتورة</h3>${cli}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} DA</span></div>`).join('')}<hr><h2>${tot} DA</h2><p>${new Date().toLocaleString()}</p><script>window.print();window.close()<\/script></body></html>`);document.getElementById('bons').innerHTML+='<br>'+new Date().toLocaleTimeString();cart=[];disc=0;render()}
+function printInv(){if(!cart.length)return alert('فارغة');let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);if(disc>0)tot=tot-tot*disc/100;let w=window.open('','','width=320,height=600');let cli=selectedClient?`زبون: ${selectedClient.name} (${selectedClient.barcode})<br>`:'';w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>فاتورة</h3>${cli}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} DA</span></div>`).join('')}<hr><h2>${tot} DA</h2><p>${new Date().toLocaleString()}</p><script>window.print();window.close()<\/script></body></html>`);}
 
-// ===== نظام النسخ الاحتياطي V11 =====
-function exportBackup(){
- let data={all,clients,pages,expDays,date:new Date().toLocaleString(),version:'V11'};
- let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- let a=document.createElement('a');
- a.href=URL.createObjectURL(blob);
- a.download='hanout-backup-'+new Date().toISOString().slice(0,10)+'.json';
- a.click();
- document.getElementById('autoSave').textContent='✅ تم النسخ';
- document.getElementById('autoSave').style.background='#00a000';
- setTimeout(()=>{document.getElementById('autoSave').textContent='💾 Auto';},2000);
-}
-function importBackup(){
- let input=document.createElement('input');
- input.type='file'; input.accept='.json';
- input.onchange=e=>{
-  let file=e.target.files[0];
-  let reader=new FileReader();
-  reader.onload=ev=>{
-   try{
-    let data=JSON.parse(ev.target.result);
-    if(confirm('⚠️ استرجاع نسخة تاريخها: '+data.date+'\nسيتم استبدال البيانات الحالية!')){
-     all=data.all||all; clients=data.clients||clients; pages=data.pages||pages; expDays=data.expDays||30;
-     localStorage.setItem('allV11',JSON.stringify(all));
-     localStorage.setItem('cliV11',JSON.stringify(clients));
-     localStorage.setItem('pagesV11',JSON.stringify(pages));
-     save(); alert('✅ تم الاسترجاع - سيتم إعادة التحميل'); location.reload();
-    }
-   }catch(err){alert('❌ ملف غير صالح')}
-  };
-  reader.readAsText(file);
+// ===== نظام البيع + الفواتير الجديد V12 =====
+function sell(isDebt){
+ if(!cart.length)return alert('السلة فارغة');
+ let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
+ if(disc>0) tot=tot-tot*disc/100;
+ if(isDebt && !selectedClient) return alert('اختر زبون للدين 👥');
+ if(isDebt){selectedClient.debt+=tot; selectedClient.history.push({date:new Date().toLocaleString(),amount:tot});}
+ // حفظ الفاتورة
+ let bon={
+  id:Date.now(),
+  date: new Date().toLocaleString(),
+  dateISO: new Date().toISOString(),
+  items: [...cart],
+  total: tot,
+  discount: disc,
+  type: isDebt?'دين':'نقدي',
+  client: selectedClient?{name:selectedClient.name,barcode:selectedClient.barcode,phone:selectedClient.phone}:null,
+  count: cart.length
  };
- input.click();
+ bons.push(bon);
+ // خصم المخزون
+ cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});
+ save();
+ // طباعة
+ let w=window.open('','','width=340,height=600');
+ let cli=selectedClient?`زبون: ${selectedClient.name} (${selectedClient.barcode})<br>دين سابق: ${selectedClient.debt-tot} DA<br>`:''; 
+ w.document.write(`<html dir=rtl><head><meta charset="UTF-8"><style>body{font-family:Tahoma;text-align:center;font-size:12px;padding:10px} hr{margin:6px 0}</style></head><body><h3>${isDebt?'فاتورة دين 📒':'فاتورة نقدي 💵'}</h3>${cli}<small>${bon.date} - #${bon.id.toString().slice(-6)}</small><hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} DA</span></div>`).join('')}<hr><h2>${tot} DA</h2>${disc?`<small>تخفيض ${disc}%</small>`:''}<p>شكرا لزيارتكم</p><script>window.print();window.close()<\/script></body></html>`);
+ document.getElementById('bonsMini').innerHTML = bons.slice(-8).reverse().map(b=>`${b.date.slice(11,19)} - ${b.total} DA ${b.type==='دين'?'📒':''}`).join('<br>')+'<br>';
+ cart=[];disc=0;render();
 }
-function autoBackup(){
- let data={all,clients,pages,expDays,date:new Date().toISOString()};
- localStorage.setItem('autoBackup', JSON.stringify(data));
- localStorage.setItem('autoBackupTime', new Date().toLocaleString());
- let el=document.getElementById('autoSave');
- if(el){el.textContent='💾 '+new Date().toLocaleTimeString().slice(0,5); el.style.background='#006600';}
-}
-setInterval(autoBackup, 5*60*1000);
-window.addEventListener('load', ()=>{
- let backup=localStorage.getItem('autoBackup');
- let time=localStorage.getItem('autoBackupTime');
- if(time) document.getElementById('autoSave').textContent='💾 '+time.slice(11,16);
- if(backup && all.length===0){
-  if(confirm('⚠️ وجدت نسخة تلقائية من '+time+'، استرجاعها؟')){
-   let data=JSON.parse(backup); all=data.all; clients=data.clients; pages=data.pages; save(); location.reload();
-  }
- }
-});
 
-document.getElementById('codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')addByScan()});
-draw();render();save();
-</script></body></html>
+function openBons(){
+ document.getElementById('mBons').style.display='flex';
+ renderBons();
+}
+function renderBons(){
+ let q=(document.getElementById('searchBon').value||'').toLowerCase();
+ let filtered=bons.filter(b=>!q||(b.client&&b.client.name.toLowerCase().includes(q))||b.date.toLowerCase().includes(q)||b.total.toString().includes(q));
+ filtered=filtered.reverse();
+ let today=bons.filter(b=>b.date.startsWith(new Date().toLocaleDateString()));
+ document.getElementById('todayTotal').textContent=today.reduce((s,b)=>s+b.total,0)+' DA';
+ document.getElementById('todayCount').textContent=today.length;
+ document.getElementById('bonsList').innerHTML=filtered.map(b=>`
+ <div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee;${b.type==='دين'?'background:#fff3cd':''}">
+  <div style="flex:1;cursor:pointer" onclick="returnBon(${b.id})">
+   <b>#${b.id.toString().slice(-6)} - ${b.total} DA ${b.type==='دين'?'📒 دين':'💵 نقدي'}</b><br>
+   <small>${b.date} - ${b.client?b.client.name+' ('+b.client.barcode+')':'بدون زبون'} - ${b.count} مادة</small><br>
+   <small style="color:#666">${b.items.map(i=>i.name+' x'+i.qty).join(', ').slice(0,60)}</small>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:3px">
+   <button onclick="reprintBon(${b.id})" style="background:#000;color:#fff;border:0;padding:4px 8px;border-radius:4px;font-size:10px">🖨️</button>
+   <button onclick="returnBon(${b.id})" style="background:#0044ff;color:#fff;border:0;padding:4px 8px;border-radius:4px;font-size:10px">👁️</button>
+   <button onclick="deleteBon(${b.id})" style="background:red;color:#fff;border:0;padding:4px 8px;border-radius:4px;font-size:10px">🗑️</button>
+  </div>
+ </div>`).join('')||'<div style="padding:12px;text-align:center;color:#888">لا يوجد فواتير</div>';
+}
+function renderBonsMini(){
+ document.getElementById('bonsMini').innerHTML=bons.slice(-10).reverse().map(b=>`${b.date.slice(11,19)} - ${b.total} DA`).join('<br>');
+}
+function reprintBon(id){
+ let b=bons.find(x=>x.id===id); if(!b)return;
+ let w=window.open('','','width=340,height=600');
+ let cli=b.client?`زبون: ${b.client.name} (${b.client.barcode})<br>`:''; 
+ w.document.write(`<html dir=rtl><head><meta charset="UTF-8"></head><body style="font-family:Tahoma;text-align:center;font-size:12px"><h3>إعادة طبع #${b.id.toString().slice(-6)}</h3>${cli}<small>${b.date}</small><hr>${b.items.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} DA</span></div>`).join('')}<hr><h2>${b.total} DA - ${b.type}</h2><script>window.print();window.close()<\/script></body></html>`);
+}
+function returnBon(id){
+ let b=bons.find(x=>x.id===id); if(!b)return;
+ if(confirm(`هل تريد إرجاع الفاتورة #${b.id.toString().slice(-6)}؟\nالتاريخ: ${b.date}\nالمجموع: ${b.total} DA\n\nسيتم إرجاع الكمية للمخزون`)){
+  b.items.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock+=c.qty});
+  if(b.type==='دين' && b.client){let cl=clients.find(x=>x.barcode===b.client.barcode);if(cl)cl.debt-=b.total;}
+  bons=bons.filter(x=>x.id!==id);
+  save();draw();renderBons();alert('تم الإرجاع');
+ }
+}
+function deleteBon(id){
+ if(confirm('حذف نهائي؟')){bons=bons.filter(x=>x.id!==id);save();renderBons();}
+}
+function exportBons(){
+ let csv='ID,Date,Type,Client,Total,Items\n'+bons.map(b=>`${b.id},"${b.date}",${b.type},"${b.client?b.client.name:''}",${b.total},"${b.items.map(i=>i.name+' x'+i.qty).join(';')}"`).join('\n');
+ let blob=new Blob([csv],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='factures-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+}
+
+// ===== BACKUP =====
+function exportBackup(){
+ let data={all,clients,bons,pages,expDays,date:new Date().toLocaleString(),version:'V12'};
+ let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hanout-V12-'+new Date().toISOString().slice(0,10)+'.json
