@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hanout V22 - PERFECT 3 COLS</title>
+<title>Hanout V23 - PERFECT + EXCEL</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;font-family:Tahoma}
 html,body{height:100dvh;width:100%;overflow:hidden}
@@ -133,20 +134,31 @@ body{background:#0a0a0a;color:#fff;display:flex;flex-direction:column}
 <div class="modal" id="mClients"><div class="box"><h3>👥 الزبائن</h3><div style="background:#e8f3ff;padding:8px;border-radius:8px"><div style="display:flex;gap:4px"><input id="cName" placeholder="اسم" style="flex:2"><input id="cPhone" placeholder="هاتف" style="flex:1"></div><button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة</button><div id="newBox" style="display:none;background:#fff;border:2px dashed #000;border-radius:8px;padding:8px;text-align:center;margin:6px 0"><b id="newName"></b><br><svg id="bcNew"></svg><div id="bcNewTxt" style="font-family:monospace"></div></div></div><input id="searchClient" placeholder="🔍 بحث..." oninput="renderClients()" style="margin-top:8px"><div id="clientList" style="margin-top:6px;max-height:260px;overflow:auto;border:1px solid #ddd;border-radius:8px"></div><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
 <div class="modal" id="mAdd"><div class="box"><h3 id="addTitle">➕ سلعة</h3><input id="aName" placeholder="اسم السلعة *"><div style="display:flex;gap:4px"><input id="aCode" placeholder="الكود/باركود" style="flex:1"><button style="background:#00ff18;color:#000;border:0;padding:10px 12px;border-radius:8px;font-weight:bold" onclick="openCamForAdd()">📷</button></div><div style="background:#fffbe6;padding:6px;border-radius:6px;font-size:11px;margin:4px 0;border:1px dashed #ffeb00" id="autoCodeInfo"></div><div style="display:flex;gap:4px"><input id="aPrice" type="number" placeholder="بيع *"><input id="aBuyPrice" type="number" placeholder="شراء - للربح"></div><div style="display:flex;gap:4px"><input id="aQty" type="number" placeholder="كمية"><input id="aMin" type="number" placeholder="إنذار"></div><input id="aExp" type="date"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">💾 حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
 <div class="modal" id="mRem"><div class="box"><h3>% Remise</h3><input id="remVal" type="number" placeholder="10"><button class="btn" style="background:#000;color:#fff" onclick="applyRem()">تطبيق</button><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
-<div class="modal" id="mBil"><div class="box" style="max-width:560px"><h3>📊 Bilan - الأرباح</h3>
+
+<div class="modal" id="mBil"><div class="box" style="max-width:580px"><h3>📊 Bilan - الأرباح + Excel</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0">
 <div style="background:#00a000;color:#fff;padding:10px;border-radius:8px;text-align:center"><div style="font-size:11px">اليوم</div><div id="pDay" style="font-size:16px;font-weight:bold">0 DA</div><div id="pDayM" style="font-size:10px"></div></div>
 <div style="background:#0044ff;color:#fff;padding:10px;border-radius:8px;text-align:center"><div style="font-size:11px">هذا الشهر</div><div id="pMonth" style="font-size:16px;font-weight:bold">0 DA</div><div id="pMonthM" style="font-size:10px"></div></div>
 <div style="background:#ff8800;color:#000;padding:10px;border-radius:8px;text-align:center"><div style="font-size:11px">هذه السنة</div><div id="pYear" style="font-size:16px;font-weight:bold">0 DA</div><div id="pYearM" style="font-size:10px"></div></div>
 </div>
 <div id="bilTxt" style="background:#f5f5f5;padding:8px;border-radius:8px;font-size:12px"></div>
-<div id="dailyList" style="max-height:200px;overflow:auto;border:1px solid #ddd;border-radius:8px;margin:8px 0"></div>
+<div id="dailyList" style="max-height:160px;overflow:auto;border:1px solid #ddd;border-radius:8px;margin:8px 0"></div>
+
+<div style="background:#e8f5e9;padding:8px;border-radius:8px;margin:8px 0;border:2px solid #107c41">
+<b>📗 تصدير Excel:</b>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+<button class="btn" style="background:#107c41;color:#fff" onclick="exportExcel('day')">📗 يومي</button>
+<button class="btn" style="background:#185abd;color:#fff" onclick="exportExcel('month')">📘 شهري</button>
+<button class="btn" style="background:#d83b01;color:#fff" onclick="exportExcel('year')">📙 كامل + يوم بيوم</button>
+</div>
+</div>
+
 <div style="background:#fffbe6;padding:8px;border-radius:8px;margin:8px 0;border:1px dashed #ffeb00">
 <b>إعدادات الفاتورة:</b><br>
 <input id="shopName" value="Superat Boudbaza"><input id="shopAddr" value="Zaghaya/Mila"><input id="shopPhone" value="0784184903">
 <button class="btn" style="background:#00a000;color:#fff" onclick="saveShop()">💾 حفظ</button>
 </div>
-<div style="display:flex;gap:6px"><button class="btn" style="background:#006600;color:#fff;flex:1" onclick="exportBackup()">💾 تصدير</button><button class="btn" style="background:#ff6600;color:#fff;flex:1" onclick="importBackup()">📥 استرجاع</button><button class="btn" style="background:#aa0000;color:#fff;flex:1" onclick="clearSales()">🗑️ صفر</button></div>
+<div style="display:flex;gap:6px"><button class="btn" style="background:#006600;color:#fff;flex:1" onclick="exportBackup()">💾 JSON</button><button class="btn" style="background:#ff6600;color:#fff;flex:1" onclick="importBackup()">📥 استرجاع</button><button class="btn" style="background:#aa0000;color:#fff;flex:1" onclick="clearSales()">🗑️ صفر</button></div>
 <button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button>
 </div></div>
 
@@ -218,10 +230,43 @@ function showBilan(){
  document.getElementById('pYear').textContent=yP+' DA'; document.getElementById('pYearM').textContent='مبيعات: '+yT+' DA | '+yearSales.length+' بون';
  document.getElementById('shopName').value=shop.name;document.getElementById('shopAddr').value=shop.addr;document.getElementById('shopPhone').value=shop.phone;
  document.getElementById('bilTxt').innerHTML=`عدد البونات الكلي: ${sales.length}<br>آخر بون: ${shop.bon}<br>الربح = (بيع - شراء) x كمية`;
- let byDay={}; sales.forEach(s=>{if(!byDay[s.date])byDay[s.date]={profit:0,total:0,count:0};byDay[s.date].profit+=s.profit;byDay[s.date].total+=s.total;byDay[s.date].count++});
+ let byDay={}; sales.forEach(s=>{if(!byDay[s.date])byDay[s.date]={profit:0,total:0,count:0};byDay[s.date].profit+=s.profit;byDay[s.date].total+=s.total;byDay[s.date].count++;});
  let days=Object.keys(byDay).sort().reverse().slice(0,14);
  document.getElementById('dailyList').innerHTML='<div style="padding:6px;font-weight:bold;background:#000;color:#ffeb00">📅 الأرباح يوم بيوم (آخر 14 يوم)</div>'+days.map(d=>`<div style="display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid #eee;font-size:11px"><span>${d}</span><span>${byDay[d].count} بون</span><span style="color:#0044ff">${byDay[d].total} DA</span><span style="color:#00a000;font-weight:bold">R:${byDay[d].profit} DA</span></div>`).join('')||'لا يوجد';
  document.getElementById('mBil').style.display='flex'
+}
+function exportExcel(type){
+ let now=new Date(); let todayStr=now.toISOString().slice(0,10); let monthStr=todayStr.slice(0,7);
+ let filtered=[];
+ if(type==='day') filtered=sales.filter(s=>s.date===todayStr);
+ if(type==='month') filtered=sales.filter(s=>s.date.startsWith(monthStr));
+ if(type==='year') filtered=sales;
+ if(!filtered.length) return alert('لا يوجد مبيعات في هذه الفترة - بيع أولا!');
+ let rows=[];
+ rows.push([`Superat Boudbaza - Rapport ${type.toUpperCase()} - ${todayStr}`]);
+ rows.push([`Date Export: ${now.toLocaleString()}`]);
+ rows.push([]);
+ rows.push(['Date','Heure','N° Bon','Client','Articles (détail)','Qte Totale','Total DA','Profit DA','Type']);
+ filtered.forEach(s=>{
+   let qteTot=s.items.reduce((a,b)=>a+b.qty,0);
+   let detail=s.items.map(i=>`${i.name} x${i.qty} (${i.price}DA)`).join(' | ');
+   rows.push([s.date,s.time,s.bon,s.client||'',detail,qteTot,s.total,s.profit,s.type]);
+ });
+ let total=filtered.reduce((a,b)=>a+b.total,0);
+ let profit=filtered.reduce((a,b)=>a+b.profit,0);
+ let qte=filtered.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.qty,0),0);
+ rows.push([]);
+ rows.push(['TOTAL',filtered.length+' Bons','','','',qte,total,profit]);
+ if(type==='year' || type==='month'){
+   let byDay={}; filtered.forEach(s=>{if(!byDay[s.date])byDay[s.date]={total:0,profit:0,count:0};byDay[s.date].total+=s.total;byDay[s.date].profit+=s.profit;byDay[s.date].count++;});
+   rows.push([]); rows.push(['--- Résumé par JOUR ---']); rows.push(['Date','Nb Bons','Qte','Total Ventes','Profit']);
+   Object.keys(byDay).sort().reverse().forEach(d=>rows.push([d,byDay[d].count,'',byDay[d].total,byDay[d].profit]));
+ }
+ let ws=XLSX.utils.aoa_to_sheet(rows);
+ ws['!cols']=[{wch:12},{wch:10},{wch:10},{wch:15},{wch:40},{wch:8},{wch:12},{wch:12},{wch:10}];
+ let wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,ws,'Ventes');
+ XLSX.writeFile(wb,`hanout-${type}-${todayStr}.xlsx`);
 }
 function balance(){let q=prompt('الوزن:');if(q)document.getElementById('qte').value=q}
 function printInv(){sellCash()}
@@ -254,7 +299,7 @@ function sellCredit(){
  save(); cart=[];disc=0;render();draw();renderBons();
 }
 function clearSales(){if(confirm('تصفير كل الأرباح والبونات؟')){sales=[];save();showBilan();renderBons()}}
-function exportBackup(){let data={all,clients,pages,shop,sales,date:new Date().toLocaleString(),version:'V22'};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hanout-V22-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
+function exportBackup(){let data={all,clients,pages,shop,sales,date:new Date().toLocaleString(),version:'V23'};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hanout-V23-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
 function importBackup(){let i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>{let f=e.target.files[0];let r=new FileReader();r.onload=ev=>{try{let d=JSON.parse(ev.target.result);if(confirm('استرجاع نسخة '+d.date+'؟')){all=d.all||all;clients=d.clients||clients;shop=d.shop||shop;sales=d.sales||sales;save();location.reload()}}catch(err){alert('ملف غير صالح')}};r.readAsText(f)};i.click()}
 function autoBackup(){localStorage.setItem('autoBackup',JSON.stringify({all,clients,shop,sales}));localStorage.setItem('autoBackupTime',new Date().toLocaleString())}
 setInterval(autoBackup,5*60*1000);
