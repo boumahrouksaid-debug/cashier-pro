@@ -1,70 +1,73 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hanout Pro V6 - Clients & Dettes</title>
+<title>Hanout Pro V7 - Stock Alert</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;font-family:Tahoma}body{background:#0a0a0a;color:#fff;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 .top{background:#111;display:flex;justify-content:space-between;padding:5px 8px;border-bottom:3px solid #ffeb00;align-items:center}
 .ibtn{width:42px;height:42px;background:#e8f3ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:#000}
-.price{font-size:38px;color:#00ff19;font-weight:900;text-shadow:0 0 10px #00ff19}
+.ibtn.redAlert{background:red;animation:blink 0.8s infinite;color:#fff}
+@keyframes blink{0%{opacity:1}50%{opacity:0.3}100%{opacity:1}}
+.price{font-size:36px;color:#00ff19;font-weight:900}
 .red{background:#b50000;display:flex;gap:5px;padding:6px;align-items:center;flex-wrap:wrap}
 .red input{padding:8px;border:0;border-radius:5px}
-.code{flex:1;background:#fff9c4;font-weight:bold;min-width:130px}
+.code{flex:1;background:#fff9c4;font-weight:bold;min-width:120px}
 .main{flex:1;display:flex;overflow:hidden}
 .left{width:45%;background:#1e1e1e;display:flex;flex-direction:column}
-.hdr{background:#ffec9e;color:#000;display:flex;font-weight:bold;font-size:11px;padding:5px}
+.hdr{background:#ffec9e;color:#000;display:flex;font-weight:bold;font-size:10px;padding:5px}
 .hdr span{flex:1;text-align:center}
 .inv{flex:1;overflow:auto;background:#2b2b2b}
-.row{display:flex;font-size:12px;padding:6px;border-bottom:1px solid #3a3a3a}
+.row{display:flex;font-size:11px;padding:6px;border-bottom:1px solid #3a3a3a}
 .row div{flex:1;text-align:center}
-.tot{background:yellow;color:#000;display:flex;justify-content:space-between;padding:7px;font-weight:900}
-.client-bar{background:#005500;color:#fff;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
-.right{width:55%;background:#000;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:5px;overflow:auto}
-.prod{background:#222;border:1px solid #444;border-radius:7px;padding:4px;text-align:center;cursor:pointer;height:86px;position:relative}
-.prod .c{position:absolute;top:2px;left:2px;background:red;color:#fff;font-size:8px;padding:1px 4px;border-radius:3px}
-.prod .p{position:absolute;bottom:2px;right:2px;background:#000;color:#0f0;font-size:8px;padding:1px 3px}
-.prod .n{font-size:9px;color:#ffeb3b;margin-top:28px;height:16px;overflow:hidden}
+.row.low{background:#550000}
+.tot{background:yellow;color:#000;display:flex;justify-content:space-between;padding:7px;font-weight:900;font-size:12px}
+.alert-bar{background:#ff0000;color:#fff;padding:6px;text-align:center;font-weight:bold;font-size:12px;display:none;animation:blink 1s infinite}
+.client-bar{background:#005500;color:#fff;padding:5px 8px;display:flex;justify-content:space-between;font-size:11px}
+.right{width:55%;background:#000;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;overflow:auto}
+.prod{background:#222;border:1px solid #444;border-radius:7px;padding:3px;text-align:center;cursor:pointer;height:88px;position:relative}
+.prod.low{border:2px solid red;background:#3a0000;animation:blink 2s infinite}
+.prod.out{border:2px solid #666;background:#111;opacity:0.5}
+.prod .c{position:absolute;top:1px;left:1px;background:red;color:#fff;font-size:8px;padding:1px 4px;border-radius:3px}
+.prod .p{position:absolute;bottom:1px;right:1px;background:#000;color:#0f0;font-size:8px;padding:1px 3px}
+.prod .q{position:absolute;top:1px;right:1px;background:#ffeb00;color:#000;font-size:8px;padding:1px 4px;border-radius:3px;font-weight:bold}
+.prod .q.qRed{background:red;color:#fff}
+.prod .n{font-size:9px;color:#ffeb3b;margin-top:26px;height:14px;overflow:hidden}
 .bottom{background:#1a1a1a;border-top:2px solid #b50000;display:flex;flex-direction:column;gap:3px;padding:4px}
 .b-row{display:flex;gap:4px}
 .b{flex:1;background:#2a2a2a;border:1px solid #444;border-radius:6px;padding:8px 2px;text-align:center;cursor:pointer;font-size:11px}
 .b-green{background:#00a000;color:#fff;font-weight:bold}
 .b-yellow{background:#ffeb00;color:#000;font-weight:bold}
-.b-blue{background:#0044ff;color:#fff;font-weight:bold}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}
-.box{background:#fff;color:#000;padding:14px;border-radius:12px;width:96%;max-width:420px;max-height:90vh;overflow:auto}
+.b-blue{background:#0044ff;color:#fff}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}
+.box{background:#fff;color:#000;padding:14px;border-radius:12px;width:96%;max-width:430px;max-height:90vh;overflow:auto}
 .box input{width:100%;padding:10px;margin:5px 0;border:2px solid #ddd;border-radius:8px}
 .btn{padding:12px;border:0;border-radius:8px;font-weight:bold;width:100%;cursor:pointer;margin-top:6px}
-.clist{max-height:300px;overflow:auto}
-.citem{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #eee;cursor:pointer}
-.citem:hover{background:#f0f0f0}
-.debt{color:red;font-weight:bold}
-@media(max-width:768px){.main{flex-direction:column}.left{height:48%}.right{height:52%;width:100%}.price{font-size:30px}}
+.clist{max-height:280px;overflow:auto}
+.citem{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee}
+@media(max-width:768px){.main{flex-direction:column}.left{height:45%}.right{height:55%;width:100%}.price{font-size:28px}}
 </style></head><body>
 
 <div class="top">
-<div style="display:flex;gap:6px">
-<div class="ibtn" onclick="openClientModal()" title="الزبائن">👥</div>
-<div class="ibtn" onclick="openAdd()" title="إضافة سلعة">➕</div>
-<div class="ibtn" onclick="showBilan()" title="Bilan">📊</div>
+<div style="display:flex;gap:5px">
+<div class="ibtn" id="stockAlertBtn" onclick="openStock()" title="المخزون">📦</div>
+<div class="ibtn" onclick="openClientModal()">👥</div>
+<div class="ibtn" onclick="openAdd()">➕</div>
 </div>
 <div style="display:flex;gap:8px;align-items:center"><span>DA</span><div class="price" id="total">0,00</div></div>
 </div>
 
-<div class="client-bar" id="clientBar" style="display:none">
-<span id="clientName">👤 زبون: -</span>
-<span id="clientDebt">دين: 0 DA</span>
-<button onclick="clearClient()" style="background:red;color:#fff;border:0;padding:3px 8px;border-radius:4px">X</button>
-</div>
+<div class="alert-bar" id="alertBar">🚨 تنبيه: سلع قاربت على النفاد! اضغط 📦</div>
+<div class="client-bar" id="clientBar" style="display:none"><span id="clientName">-</span><span id="clientDebt"></span><button onclick="clearClient()" style="background:red;color:#fff;border:0;padding:2px 8px;border-radius:4px">X</button></div>
 
 <div class="red">
-<input id="codeIn" class="code" placeholder="سكانير سلعة أو كود زبون..." autofocus>
-<input id="qte" type="number" value="1" style="width:55px;text-align:center">
+<input id="codeIn" class="code" placeholder="سكانير سلعة / زبون..." autofocus>
+<input id="qte" type="number" value="1" style="width:50px;text-align:center">
 <button onclick="addByScan()" style="background:#ffeb00;color:#000;border:0;padding:8px 12px;border-radius:6px;font-weight:bold">OK</button>
 </div>
 
 <div class="main">
 <div class="left">
-<div class="hdr"><span style="flex:2">Article</span><span>Qte</span><span>Prix</span><span>Montant</span></div>
+<div class="hdr"><span style="flex:2">Article</span><span>Qte</span><span>Prix</span><span>Mont</span></div>
 <div class="inv" id="inv"></div>
 <div class="tot"><span id="t1">0</span><span id="t2">0 DA</span></div>
 </div>
@@ -73,139 +76,113 @@
 
 <div class="bottom">
 <div class="b-row">
-<div class="b" onclick="switchPage(1)">PAGE 01</div>
-<div class="b" onclick="switchPage(2)">PAGE 02</div>
-<div class="b" onclick="filterPain()">🍞 PAIN</div>
+<div class="b" onclick="switchPage(1)">PAGE1 🍞</div>
+<div class="b" onclick="switchPage(2)">PAGE2 📦</div>
 <div class="b b-blue" onclick="openClientModal()">👥 زبون</div>
+<div class="b" onclick="openStock()">📦 مخزون</div>
 </div>
 <div class="b-row">
-<div class="b" onclick="doRetour()">↩️ Retour</div>
-<div class="b" onclick="openRemise()">% Remise</div>
+<div class="b" onclick="doRetour()">↩️</div>
 <div class="b b-yellow" onclick="clearCart()">🗑️</div>
-<div class="b b-green" onclick="sell(false)">💵 بيع نقدي</div>
-<div class="b b-blue" onclick="sell(true)" style="background:#aa0000">📒 بيع دين</div>
+<div class="b b-green" onclick="sell(false)">💵 نقدي</div>
+<div class="b" style="background:#aa0000;color:#fff" onclick="sell(true)">📒 دين</div>
 </div>
 </div>
 
-<!-- MODAL CLIENTS -->
+<!-- STOCK MODAL -->
+<div class="modal" id="mStock"><div class="box">
+<h3>📦 تتبع المخزون - إنذار نفاد</h3>
+<div style="background:#ffcccc;padding:6px;border-radius:6px;margin:8px 0;font-size:12px" id="lowList"></div>
+<div class="clist" id="stockList"></div>
+<button class="btn" style="background:#000;color:#fff" onclick="closeM()">إغلاق</button>
+</div></div>
+
 <div class="modal" id="mClients"><div class="box">
-<h3>👥 خدمة الزبائن - الديون</h3>
-<input id="searchClient" placeholder="بحث: اسم أو كودبار" oninput="renderClients()">
-<div style="display:flex;gap:5px;margin:8px 0"><input id="cName" placeholder="اسم الزبون" style="flex:1"><input id="cPhone" placeholder="هاتف" style="flex:1"></div>
-<button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون جديد + كودبار</button>
-<div id="barcodePreview" style="text-align:center;margin:10px 0;background:#fff;padding:5px"><svg id="bc"></svg></div>
-<hr>
+<h3>👥 الزبائن</h3><div style="display:flex;gap:5px"><input id="cName" placeholder="الاسم" style="flex:1"><input id="cPhone" placeholder="هاتف" style="flex:1"></div>
+<button class="btn" style="background:#0044ff;color:#fff" onclick="addClient()">+ إضافة زبون</button>
+<div style="text-align:center;margin:8px 0"><svg id="bc"></svg></div>
+<input id="searchClient" placeholder="بحث" oninput="renderClients()" style="margin-top:6px">
 <div class="clist" id="clientList"></div>
 <button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button>
 </div></div>
 
-<div class="modal" id="mAdd"><div class="box"><h3>➕ سلعة</h3><input id="aName" placeholder="اسم"><input id="aCode" placeholder="كود"><input id="aPrice" type="number" placeholder="سعر"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
-<div class="modal" id="mRem"><div class="box"><h3>% Remise</h3><input id="remVal" type="number" placeholder="10"><button class="btn" style="background:#000;color:#fff" onclick="applyRem()">تطبيق</button><button class="btn" style="background:#ddd" onclick="closeM()">إغلاق</button></div></div>
+<div class="modal" id="mAdd"><div class="box"><h3>➕ سلعة + مخزون</h3><input id="aName" placeholder="اسم السلعة"><input id="aCode" placeholder="كود"><input id="aPrice" type="number" placeholder="سعر البيع"><input id="aQty" type="number" placeholder="الكمية الحالية مثلا 50"><input id="aMin" type="number" placeholder="الحد الأدنى للإنذار مثلا 5"><button class="btn" style="background:#00a000;color:#fff" onclick="saveAdd()">حفظ</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
+<div class="modal" id="mRestock"><div class="box"><h3>📥 تزويد مخزون</h3><div id="restockInfo"></div><input id="restockQty" type="number" placeholder="كمية إضافية"><button class="btn" style="background:#00a000;color:#fff" onclick="doRestock()">تزويد</button><button class="btn" style="background:#ddd" onclick="closeM()">إلغاء</button></div></div>
 
 <script>
-let pages={1:[{code:'A1',name:'خبز عادي',price:10},{code:'A2',name:'بيض',price:20},{code:'A3',name:'خبز بريوش',price:20},{code:'A4',name:'خبز سميد',price:20},{code:'A5',name:'أرز 10كلغ',price:220},{code:'A6',name:'تريدة',price:140},{code:'A7',name:'حمص',price:440},{code:'A8',name:'عدس',price:220}],2:[{code:'B1',name:'زيت 5ل',price:650},{code:'B2',name:'سكر',price:90},{code:'B3',name:'قهوة',price:280},{code:'B4',name:'حليب بودرة',price:1200}]};
-let cur=1, cart=[], all=JSON.parse(localStorage.getItem('all6')||'null')||[...pages[1],...pages[2]], disc=0;
-let clients=JSON.parse(localStorage.getItem('clients')||'[]');
+let pages={1:[{code:'A1',name:'خبز عادي',price:10,stock:15,min:5},{code:'A2',name:'بيض',price:20,stock:3,min:10},{code:'A3',name:'خبز بريوش',price:20,stock:25,min:5},{code:'A4',name:'خبز سميد',price:20,stock:2,min:5},{code:'A5',name:'أرز 10كلغ',price:220,stock:40,min:10},{code:'A6',name:'تريدة',price:140,stock:8,min:5}],2:[{code:'B1',name:'زيت 5ل',price:650,stock:12,min:3},{code:'B2',name:'سكر',price:90,stock:0,min:5}]};
+let cur=1, cart=[], disc=0, restockTarget=null;
+let all=JSON.parse(localStorage.getItem('all7')||'null')||[...pages[1],...pages[2]];
+let clients=JSON.parse(localStorage.getItem('clients7')||'[]');
 let selectedClient=null;
 
-function genCode(){return 'C'+Date.now().toString().slice(-6)}
-function addClient(){
- let name=document.getElementById('cName').value.trim(), phone=document.getElementById('cPhone').value.trim();
- if(!name)return alert('اكتب الاسم');
- let code=genCode();
- let cl={id:Date.now(),name:name,phone:phone,barcode:code,debt:0,history:[]};
- clients.push(cl);localStorage.setItem('clients',JSON.stringify(clients));
- document.getElementById('cName').value='';document.getElementById('cPhone').value='';
- renderClients(); showBarcode(code);
+function saveAll(){localStorage.setItem('all7',JSON.stringify(all));localStorage.setItem('clients7',JSON.stringify(clients))}
+function checkLow(){
+ let low=all.filter(p=>p.stock<=p.min);
+ document.getElementById('alertBar').style.display=low.length?'block':'none';
+ document.getElementById('stockAlertBtn').className=low.length?'ibtn redAlert':'ibtn';
+ return low;
 }
-function showBarcode(code){ try{JsBarcode("#bc",code,{format:"CODE128",width:1.5,height:50,displayValue:true});}catch(e){}}
-function renderClients(){
- let q=(document.getElementById('searchClient').value||'').toLowerCase();
- let list=document.getElementById('clientList');
- list.innerHTML=clients.filter(c=>c.name.toLowerCase().includes(q)||c.barcode.toLowerCase().includes(q)||c.phone.includes(q)).map(c=>`
-  <div class="citem" onclick="selectClient(${c.id})">
-   <div><b>${c.name}</b><br><small>${c.phone} - ${c.barcode}</small></div>
-   <div><span class="${c.debt>0?'debt':''}">${c.debt} DA</span><br><button onclick="event.stopPropagation();payDebt(${c.id})" style="background:green;color:#fff;border:0;padding:2px 6px;border-radius:4px;font-size:10px">دفع</button> <button onclick="event.stopPropagation();printClient(${c.id})" style="background:#000;color:#fff;border:0;padding:2px 6px;border-radius:4px;font-size:10px">🧾</button> <button onclick="event.stopPropagation();delClient(${c.id})" style="background:red;color:#fff;border:0;padding:2px 4px;border-radius:4px">X</button></div>
-  </div>`).join('')||'<div style="padding:10px;text-align:center;color:#999">لا يوجد زبائن</div>';
+function draw(){
+ document.getElementById('grid').innerHTML=pages[cur].map(p=>{
+  let isLow=p.stock<=p.min, isOut=p.stock<=0;
+  return `<div class="prod ${isLow?'low':''} ${isOut?'out':''}" onclick="add('${p.code}')">
+  <div class="c">${p.code}</div><div class="q ${isLow?'qRed':''}">${p.stock}</div>
+  <div style="height:42px;background:${isOut?'#222':'#333'};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px">${isOut?'⛔':(isLow?'⚠️':'🍞')}</div>
+  <div class="n">${p.name}</div><div class="p">${p.price}</div></div>`;
+ }).join('');
+ checkLow();
 }
-function selectClient(id){
- selectedClient=clients.find(c=>c.id===id);
- document.getElementById('clientBar').style.display='flex';
- document.getElementById('clientName').textContent='👤 '+selectedClient.name+' ('+selectedClient.barcode+')';
- document.getElementById('clientDebt').textContent='دين سابق: '+selectedClient.debt+' DA';
- closeM();
-}
-function clearClient(){selectedClient=null;document.getElementById('clientBar').style.display='none'}
-function payDebt(id){
- let c=clients.find(x=>x.id===id);
- let m=prompt('مبلغ الدفع للزبون '+c.name+' (دينه '+c.debt+' DA):');
- if(!m)return; m=parseInt(m); if(isNaN(m))return;
- c.debt=Math.max(0,c.debt-m); c.history.push({date:new Date().toLocaleString(),type:'دفع',amount:m});
- localStorage.setItem('clients',JSON.stringify(clients)); renderClients();
- if(selectedClient && selectedClient.id===id){document.getElementById('clientDebt').textContent='دين سابق: '+c.debt+' DA'}
-}
-function printClient(id){
- let c=clients.find(x=>x.id===id);
- let w=window.open('','','width=350,height=600');
- w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h2>بطاقة زبون</h2><h3>${c.name}</h3><p>${c.phone}</p><svg id="bc2"></svg><p>كود: ${c.barcode}</p><h3 style="color:red">الدين: ${c.debt} DA</h3><hr><div>${c.history.slice(-10).map(h=>`<div>${h.date} - ${h.type}: ${h.amount} DA</div>`).join('')}</div><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><script>JsBarcode("#bc2","${c.barcode}",{format:"CODE128"});window.print()<\/script></body></html>`);
-}
-function delClient(id){if(confirm('حذف الزبون؟')){clients=clients.filter(c=>c.id!==id);localStorage.setItem('clients',JSON.stringify(clients));renderClients();if(selectedClient&&selectedClient.id===id)clearClient()}}
-function openClientModal(){document.getElementById('mClients').style.display='flex';renderClients()}
-function draw(){document.getElementById('grid').innerHTML=pages[cur].map(p=>`<div class="prod" onclick="add('${p.code}')"><div class="c">${p.code}</div><div style="height:48px;background:#333;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px">🍞</div><div class="n">${p.name}</div><div class="p">${p.price}</div></div>`).join('')}
 function add(code){
  let pr=all.find(x=>x.code===code);
- if(!pr){
-  let cl=clients.find(c=>c.barcode===code);
-  if(cl){selectClient(cl.id);return}
-  return alert('غير موجود: '+code);
- }
+ if(!pr){let cl=clients.find(c=>c.barcode===code);if(cl){selectClient(cl.id);return}return alert('غير موجود: '+code)}
+ if(pr.stock<=0)return alert('⛔ نفد المخزون: '+pr.name);
  let q=parseInt(document.getElementById('qte').value)||1;
+ if(q>pr.stock)return alert('الكمية المطلوبة أكبر من المخزون! باقي: '+pr.stock);
  let ex=cart.find(x=>x.code===code);
- if(ex)ex.qty+=q;else cart.push({...pr,qty:q});
+ if(ex){if(ex.qty+q>pr.stock)return alert('تجاوزت المخزون'); ex.qty+=q}else cart.push({...pr,qty:q});
  render();
 }
-function addByScan(){let v=document.getElementById('codeIn').value.toUpperCase().trim();if(!v)return;add(v);document.getElementById('codeIn').value=''}
 function render(){
- let t=0;document.getElementById('inv').innerHTML=cart.map(x=>{let m=x.price*x.qty;t+=m;return `<div class="row"><div style="flex:2;text-align:right">${x.name}</div><div>${x.qty}</div><div>${x.price}</div><div>${m}</div></div>`}).join('');
- if(disc>0)t=t-t*disc/100;
+ let t=0;document.getElementById('inv').innerHTML=cart.map(x=>{let m=x.price*x.qty;t+=m;let low=x.qty>=x.stock?'low':'';return `<div class="row ${low}"><div style="flex:2;text-align:right">${x.name}</div><div>${x.qty}/${x.stock}</div><div>${x.price}</div><div>${m}</div></div>`}).join('');
  document.getElementById('total').textContent=t.toFixed(2).replace('.',',');
  document.getElementById('t1').textContent=cart.length+' مادة';
  document.getElementById('t2').textContent=t+' DA';
 }
 function sell(isDebt){
  if(!cart.length)return alert('السلة فارغة');
- let tot=cart.reduce((s,c)=>s+c.price*c.qty,0); if(disc>0)tot=tot-tot*disc/100;
- if(isDebt){
-  if(!selectedClient)return alert('اختار الزبون أولا من زر 👥 زبون');
-  selectedClient.debt+=tot;
-  selectedClient.history.push({date:new Date().toLocaleString(),type:'دين جديد',amount:tot,items:[...cart]});
-  localStorage.setItem('clients',JSON.stringify(clients));
-  alert('تم تسجيل دين '+tot+' DA على الزبون '+selectedClient.name+'\nمجموع ديونه: '+selectedClient.debt+' DA');
- }else{
-  if(selectedClient){
-   let pay=confirm('الزبون '+selectedClient.name+' عندو دين '+selectedClient.debt+' DA\nهل تريد خصم هذا البيع من دينه؟');
-   if(pay){selectedClient.debt=Math.max(0,selectedClient.debt-tot);selectedClient.history.push({date:new Date().toLocaleString(),type:'دفع مع بيع',amount:tot});localStorage.setItem('clients',JSON.stringify(clients));}
-  }
- }
- printTicket(tot,isDebt); cart=[];disc=0; render();
+ let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
+ if(isDebt){if(!selectedClient)return alert('اختر زبون');selectedClient.debt+=tot;selectedClient.history.push({date:new Date().toLocaleString(),type:'دين',amount:tot})}
+ cart.forEach(c=>{let p=all.find(x=>x.code===c.code);if(p)p.stock-=c.qty});
+ saveAll();draw();
+ printTicket(tot,isDebt); cart=[];render();
+ if(checkLow().length){if(navigator.vibrate)navigator.vibrate([200,100,200]);}
 }
-function printTicket(tot,isDebt){
- let w=window.open('','','width=320,height=600');
- let clientInfo=selectedClient?`<div>الزبون: ${selectedClient.name} (${selectedClient.barcode})<br>الدين الكلي: ${selectedClient.debt} DA</div><hr>`:'';
- let type=isDebt?'فاتورة دين':'فاتورة نقدية';
- w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>${type}</h3>${clientInfo}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} DA</span></div>`).join('')}<hr><h2>${tot} DA</h2><p>${new Date().toLocaleString()}</p><script>window.print();window.close()<\/script></body></html>`);
+function openStock(){
+ let low=checkLow();
+ document.getElementById('lowList').innerHTML=low.length?`🚨 <b>${low.length} سلعة قاربت على النفاد:</b><br>`+low.map(p=>`• ${p.name} - باقي ${p.stock} (الحد ${p.min})`).join('<br>'):`✅ كل المخزون جيد`;
+ document.getElementById('stockList').innerHTML=all.map(p=>{
+  let cls=p.stock<=p.min?'style="background:#ffcccc"':'';
+  return `<div class="citem" ${cls}><div><b>${p.name}</b> (${p.code})<br><small>مخزون: ${p.stock} | حد: ${p.min} ${p.stock<=p.min?'🚨':''}</small></div><div><button onclick="openRestock('${p.code}')" style="background:#00a000;color:#fff;border:0;padding:4px 8px;border-radius:4px">+ تزويد</button></div></div>`;
+ }).join('');
+ document.getElementById('mStock').style.display='flex';
 }
-function switchPage(n){cur=n;draw()}
-function filterPain(){cur=1;draw()}
-function doRetour(){cart.pop();render()}
-function clearCart(){if(confirm('تفرغ السلة؟')){cart=[];render()}}
-function changeQty(d){let e=document.getElementById('qte');e.value=Math.max(1,parseInt(e.value)+d)}
+function openRestock(code){restockTarget=all.find(x=>x.code===code);document.getElementById('restockInfo').innerHTML=`<b>${restockTarget.name}</b><br>المخزون الحالي: ${restockTarget.stock}`;document.getElementById('mRestock').style.display='flex'}
+function doRestock(){let q=parseInt(document.getElementById('restockQty').value)||0;if(q<=0)return;restockTarget.stock+=q;saveAll();draw();closeM();openStock()}
+function addByScan(){let v=document.getElementById('codeIn').value.toUpperCase().trim();if(!v)return;add(v);document.getElementById('codeIn').value=''}
+function genCode(){return 'C'+Date.now().toString().slice(-6)}
+function addClient(){let n=document.getElementById('cName').value.trim(), ph=document.getElementById('cPhone').value.trim();if(!n)return alert('الاسم');let code=genCode();clients.push({id:Date.now(),name:n,phone:ph,barcode:code,debt:0,history:[]});saveAll();renderClients();try{JsBarcode("#bc",code,{format:"CODE128",width:1.4,height:40,displayValue:true})}catch(e){}}
+function renderClients(){let q=(document.getElementById('searchClient').value||'').toLowerCase();document.getElementById('clientList').innerHTML=clients.filter(c=>c.name.toLowerCase().includes(q)||c.barcode.includes(q)).map(c=>`<div class="citem" onclick="selectClient(${c.id})"><div><b>${c.name}</b><br><small>${c.barcode}</small></div><div style="color:${c.debt>0?'red':'green'}">${c.debt} DA</div></div>`).join('')}
+function selectClient(id){selectedClient=clients.find(c=>c.id===id);document.getElementById('clientBar').style.display='flex';document.getElementById('clientName').textContent='👤 '+selectedClient.name;document.getElementById('clientDebt').textContent='دين: '+selectedClient.debt+' DA';closeM()}
+function clearClient(){selectedClient=null;document.getElementById('clientBar').style.display='none'}
+function openClientModal(){document.getElementById('mClients').style.display='flex';renderClients()}
 function openAdd(){document.getElementById('mAdd').style.display='flex'}
 function closeM(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
-function saveAdd(){let n=document.getElementById('aName').value, c=document.getElementById('aCode').value, p=parseInt(document.getElementById('aPrice').value);if(!n||!c||!p)return alert('كمل');let np={code:c,name:n,price:p};all.push(np);pages[cur].push(np);localStorage.setItem('all6',JSON.stringify(all));draw();closeM()}
-function openRemise(){document.getElementById('mRem').style.display='flex'}
-function applyRem(){disc=parseInt(document.getElementById('remVal').value)||0;render();closeM()}
-function showBilan(){let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);alert(`Bilan\nمواد: ${cart.length}\nمجموع: ${tot} DA\nديون الزبائن الكلي: ${clients.reduce((s,c)=>s+c.debt,0)} DA`)}
+function saveAdd(){let n=document.getElementById('aName').value,c=document.getElementById('aCode').value,p=parseInt(document.getElementById('aPrice').value),qt=parseInt(document.getElementById('aQty').value)||0,mn=parseInt(document.getElementById('aMin').value)||5;if(!n||!c||!p)return alert('كمل');let np={code:c,name:n,price:p,stock:qt,min:mn};all.push(np);pages[cur].push(np);saveAll();draw();closeM()}
+function switchPage(n){cur=n;draw()}
+function doRetour(){cart.pop();render()}
+function clearCart(){if(confirm('تفرغ؟')){cart=[];render()}}
+function printTicket(tot,isDebt){let w=window.open('','','width=320,height=500');let cli=selectedClient?`زبون: ${selectedClient.name}<br>`:'';w.document.write(`<html dir=rtl><body style="font-family:Tahoma;text-align:center"><h3>${isDebt?'دين':'نقدي'}</h3>${cli}<hr>${cart.map(c=>`<div style="display:flex;justify-content:space-between"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty}</span></div>`).join('')}<hr><h2>${tot} DA</h2><script>window.print();window.close()<\/script></body></html>`)}
 document.getElementById('codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')addByScan()});
-draw();render();
+draw();render();checkLow();
 </script></body></html>
