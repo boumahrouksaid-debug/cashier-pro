@@ -1,72 +1,102 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>حانوت برو - نظام الكاشير</title><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><style>:root{--p:#7c3aed;--p2:#a78bfa;--y:#facc15;--g:#22c55e;--bg:#f8f7ff}*{box-sizing:border-box;font-family:Tajawal,system-ui}body{margin:0;background:var(--bg);padding:10px}header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:15px;border-radius:16px;text-align:center}h1{margin:0;font-size:22px}.card{background:#fff;border-radius:16px;padding:12px;margin:10px 0;box-shadow:0 4px 12px rgba(0,0,0,.07)}.inp{width:100%;padding:10px;border:2px solid #e5e7eb;border-radius:10px;margin:4px 0;font-size:16px}.btn{padding:10px 14px;border:0;border-radius:10px;font-weight:700;cursor:pointer}.btn-p{background:var(--p);color:#fff}.btn-y{background:var(--y)}.btn-g{background:var(--g);color:#fff;width:100%;font-size:18px;margin-top:8px}table{width:100%;border-collapse:collapse}th{background:#f3f0ff;padding:8px}td{padding:8px;border-bottom:1px solid #eee;text-align:center}#reader{width:100%;border-radius:12px;overflow:hidden;display:none}.cart-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ddd}.total{font-size:22px;font-weight:900;text-align:center;color:var(--p)}@media print{.no-print{display:none}body{background:#fff}}</style></head><body>
-<header><h1>🛒 حانوت برو V2</h1><small>نظام البيع و الجرد و الفاتورة</small></header>
-
-<div class="card no-print">
-<button class="btn btn-p" onclick="toggleScan()">📷 سكانير سلعة</button>
-<div id="reader"></div>
-<input id="scanInput" class="inp" placeholder="اكتب الباركود هنا و اضغط Enter" onkeydown="if(event.key==='Enter')addToCart(this.value)">
-<div id="cart"></div>
-<div class="total" id="total">المجموع: 0 دج</div>
-<button class="btn btn-g no-print" onclick="sell()">بيع + طباعة 🖨️</button>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hanout Pro - Fiche des Ventes</title>
+<style>
+*{box-sizing:border-box;font-family:Tahoma,sans-serif;margin:0}
+body{background:#0f0f0f;color:#fff;overflow:hidden;height:100vh;display:flex;flex-direction:column}
+.top-bar{background:linear-gradient(#222,#000);display:flex;justify-content:space-between;align-items:center;padding:5px 10px;border-bottom:3px solid yellow}
+.price-big{font-size:68px;color:#00ff00;font-weight:900;letter-spacing:2px;text-shadow:0 0 10px #00ff00}
+.price-da{font-size:32px;color:#00ff00;margin-right:15px}
+.red-bar{background:#d40000;display:flex;align-items:center;gap:8px;padding:6px}
+.red-bar input{padding:8px;border:none;border-radius:4px;width:120px}
+.red-bar .code-input{flex:1;background:#fffbe6}
+.main{display:flex;flex:1;overflow:hidden}
+.left{width:38%;background:#1a1a1a;border-left:2px solid #333;display:flex;flex-direction:column}
+.table-header{background:#f0e0b0;color:#000;padding:4px;display:flex;justify-content:space-around;font-weight:bold;font-size:13px}
+.invoice{flex:1;overflow-y:auto;background:#2a2a2a}
+.invoice-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #444;font-size:13px}
+.invoice-row:nth-child(odd){background:#333}
+.middle{width:14%;background:#111;border-left:2px solid #333;overflow-y:auto;font-size:12px;color:#00d8ff;padding:4px}
+.right{width:48%;background:#000;padding:6px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;overflow-y:auto}
+.prod-btn{background:linear-gradient(#222,#111);border:2px solid #444;border-radius:6px;padding:4px;text-align:center;cursor:pointer;position:relative;height:95px}
+.prod-btn img{width:100%;height:55px;object-fit:cover;border-radius:4px}
+.prod-btn span{display:block;font-size:11px;margin-top:2px;color:#ffeb3b}
+.prod-btn .code{position:absolute;bottom:2px;left:2px;background:red;color:#fff;font-size:10px;padding:1px 4px}
+.prod-btn .pr{position:absolute;bottom:2px;right:2px;background:#000;color:#fff;font-size:10px;padding:1px 3px}
+.bottom-bar{background:#c00;display:flex;justify-content:space-around;padding:8px;font-size:13px}
+button{cursor:pointer}
+</style>
+</head>
+<body>
+<div class="top-bar">
+<div style="display:flex;gap:10px"><div style="background:#00bcd4;padding:10px;border-radius:8px">🧾</div><div>📊 📈</div></div>
+<div style="display:flex;align-items:center"><div class="price-big" id="totalPrice">0,00</div><div class="price-da">DA</div></div>
 </div>
-
-<div class="card">
-<h3>➕ اضافة سلعة</h3>
-<input id="n" class="inp" placeholder="اسم السلعة مثل حليب">
-<input id="b" class="inp" placeholder="باركود">
-<input id="q" class="inp" type="number" placeholder="كمية">
-<input id="pr" class="inp" type="number" placeholder="سعر">
-<button class="btn btn-p" style="width:100%" onclick="saveProd()">حفظ</button>
+<div class="red-bar">
+<span>code :</span><input id="barcodeIn" class="code-input" placeholder="Scanner ici..." autofocus onkeydown="if(event.key==='Enter')addByCode(this.value)">
+<span>F12</span><span>Qte :</span><input id="qtyIn" type="number" value="1" style="width:60px">
+<span>Prix</span><input id="prixShow" readonly><span>Da</span>
+<span>Prix Col :</span><input readonly><span>Da</span>
 </div>
-
-<div class="card">
-<h3>📦 المخزون</h3>
-<table><thead><tr><th>الاسم</th><th>باركود</th><th>كمية</th><th>سعر</th><th>حذف</th></tr></thead><tbody id="list"></tbody></table>
+<div class="main">
+<div class="left">
+<div class="table-header"><span>Article</span><span>Qte</span><span>Prix_Vt</span><span>Montant</span></div>
+<div class="invoice" id="invoiceList"></div>
+<div style="background:yellow;color:#000;display:flex;justify-content:space-between;padding:5px;font-weight:bold"><span>0 da</span><span id="totalSmall">0</span><span>da</span></div>
 </div>
+<div class="middle" id="historyList">Liste des Bons<br>17:39:48<br>17:38:31<br>17:36:10<br>17:34:26<br>17:31:08<br>17:30:10<br>17:29:22<br>17:27:40<br>17:23:51<br>17:21:19<br>17:20:23<br>17:16:54<br>17:16:21<br>17:15:26<br>17:10:32</div>
+<div class="right" id="prodGrid"></div>
+</div>
+<div class="bottom-bar"><span>➕ Ajouter</span><span>🖨️ Imprimé</span><span>⬇️ Divers</span><span>↩️ Retour</span><span>PAGE 01</span><span>PAGE 02</span><span>PAGE 03</span><span>PAGE 04</span><span>PAIN OEUF</span><span>➕</span><span>➖</span><span>Remise %</span><span>Ouvrir T</span></div>
 
 <script>
-let stock=JSON.parse(localStorage.getItem('stock')||'[]');
+const products=[
+{name:'خبز سميد',code:'A4',price:20,img:'https://images.unsplash.com/photo-1549931319-a545dcf3d696?w=200'},
+{name:'خبز بريوش',code:'A3',price:20,img:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200'},
+{name:'بيض',code:'A2',price:20,img:'https://images.unsplash.com/photo-1482049016688-2d3e1b31122f?w=200'},
+{name:'خبز عادي',code:'A1',price:10,img:'https://images.unsplash.com/photo-1549931319-a545dcf3d696?w=200'},
+{name:'عدس أحمر ميزان 10 كلغ',code:'A8',price:220,img:''},
+{name:'حمص 12 ميزان 50 كلغ',code:'A7',price:440,img:''},
+{name:'تريدة ميزان 10 كلغ',code:'A6',price:140,img:''},
+{name:'أرز أبيض ميزان 10 كلغ',code:'A5',price:220,img:''},
+{name:'كاكاو أخضر ميزان 25 كلغ',code:'A12',price:480,img:''},
+{name:'فريك ميزان',code:'A11',price:300,img:''},
+{name:'عدس خشن ميزان 50 كلغ',code:'A10',price:220,img:''},
+{name:'أرز بسمتي ميزان 25 كلغ',code:'A9',price:220,img:''},
+];
 let cart=[];
-let html5Qr;
-function save(){localStorage.setItem('stock',JSON.stringify(stock));render()}
-function saveProd(){
- if(!n.value||!b.value)return alert('اكتب الاسم والباركود');
- stock.push({name:n.value,barcode:b.value,qty:+q.value||0,price:+pr.value||0});
- n.value=b.value=q.value=pr.value='';save();
+let stock=JSON.parse(localStorage.getItem('hanout_stock')||'null')||products;
+
+function renderGrid(){
+ prodGrid.innerHTML=stock.map(p=>`
+  <div class="prod-btn" onclick="addByCode('${p.code}')">
+    ${p.img?`<img src="${p.img}">`:`<div style="height:55px;background:#222;display:flex;align-items:center;justify-content:center">📦</div>`}
+    <span>${p.name}</span>
+    <div class="code">${p.code}</div>
+    <div class="pr">${p.price},00</div>
+  </div>
+ `).join('');
 }
-function render(){
- list.innerHTML=stock.map((p,i)=>`<tr><td>${p.name}</td><td>${p.barcode}</td><td>${p.qty}</td><td>${p.price}</td><td><button onclick="stock.splice(${i},1);save()">❌</button></td></tr>`).join('');
+function addByCode(code){
+ let prod=stock.find(s=>s.code===code || s.barcode===code);
+ if(!prod){alert('ماكانش: '+code);return;}
+ let q=parseInt(qtyIn.value)||1;
+ let exist=cart.find(c=>c.code===prod.code);
+ if(exist) exist.qty+=q; else cart.push({...prod,qty:q});
+ renderInvoice();
+ barcodeIn.value='';barcodeIn.focus();
 }
-function addToCart(code){
- let p=stock.find(s=>s.barcode==code);
- if(!p)return alert('السلعة غير موجودة');
- if(p.qty<=0)return alert('نفذت الكمية');
- let c=cart.find(x=>x.barcode==code);
- if(c)c.qty++;else cart.push({...p,qty:1});
- drawCart();scanInput.value='';
-}
-function drawCart(){
- cartDiv=document.getElementById('cart');
+function renderInvoice(){
  let tot=0;
- cartDiv.innerHTML=cart.map(c=>{tot+=c.price*c.qty;return `<div class=cart-item><span>${c.name} x${c.qty}</span><span>${c.price*c.qty} دج</span></div>`}).join('');
- total.innerText='المجموع: '+tot+' دج';
+ invoiceList.innerHTML=cart.map(c=>{let m=c.price*c.qty;tot+=m;return `<div class="invoice-row"><span>${c.name}</span><span>${c.qty}</span><span>${c.price}</span><span>${m}</span></div>`}).join('');
+ totalPrice.textContent=tot.toFixed(2).replace('.',',');
+ totalSmall.textContent=tot;
+ prixShow.value=cart.length?cart[cart.length-1].price:'';
 }
-function sell(){
- if(!cart.length)return alert('السلة فارغة');
- let tot=0;cart.forEach(c=>{let s=stock.find(x=>x.barcode==c.barcode);if(s)s.qty-=c.qty;tot+=c.price*c.qty});
- save();drawCartPrint(tot);cart=[];drawCart();save();
-}
-function drawCartPrint(tot){
- let w=window.open('','','width=300,height=600');
- w.document.write(`<html dir=rtl><body style=text-align:center;font-family:system-ui><h2>فاتورة حانوت برو</h2><hr>${cart.map(c=>`<div>${c.name} x${c.qty} = ${c.price*c.qty} دج</div>`).join('')}<hr><h2>${tot} دج</h2><p>شكرا لزيارتكم</p><script>window.print();window.close()<\/script></body></html>`);
-}
-function toggleScan(){
- let r=document.getElementById('reader');
- if(r.style.display=='none'||!r.style.display){r.style.display='block';
- if(!html5Qr){html5Qr=new Html5Qrcode("reader");}
- html5Qr.start({facingMode:"environment"},{fps:10,qrbox:250},(dec)=>{addToCart(dec);html5Qr.stop();r.style.display='none';});
- }else{html5Qr.stop();r.style.display='none';}
-}
-render();
+renderGrid();
 </script>
-</body></html>
+</body>
+</html>
