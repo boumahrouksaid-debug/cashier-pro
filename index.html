@@ -74,6 +74,7 @@ input[type=date]{color-scheme:dark}
 </div>
 
 <div id="tab1">
+<div class="card"><input id="searchProd" oninput="filterProd()" placeholder="🔍 بحث... اكتب اسم السلعة"><div id="quickBtns" style="display:flex;gap:6px;overflow:auto;margin-top:6px"></div></div>
 <div class="card"><b>👤 زبون الكريدي</b><div id="selectedCust" style="background:#2563eb;padding:10px;border-radius:10px;text-align:center;font-weight:700">زبون عادي</div><input id="custScanInput" placeholder="سكاني كودبار الزبون..."><div id="readerCust"></div><div class="row"><button class="btn-blue" onclick="scanCustByInput()">🔍 جبد الزبون</button><button class="btn-blue" onclick="toggleCamCust()">📷 سكاني كارت الزبون</button></div><div class="row" style="margin-top:6px"><button class="btn-orange" onclick="clearCust()">❌ زبون عادي</button><button class="btn-green" onclick="payDebt()">💰 خلص دين</button></div></div>
 <div class="card"><input id="scanInput" placeholder="سكاني كود السلعة..."><div id="reader"></div><div class="row"><button class="btn-green" onclick="addByScan()">✅ إضافة</button><button class="btn-blue" onclick="toggleCam()">📷 كاميرا البيع</button></div></div>
 <div class="card"><div id="prodList"></div></div>
