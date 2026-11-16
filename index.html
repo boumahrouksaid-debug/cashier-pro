@@ -1,102 +1,172 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hanout Pro - Fiche des Ventes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Fiche des Ventes - PRO</title>
 <style>
-*{box-sizing:border-box;font-family:Tahoma,sans-serif;margin:0}
-body{background:#0f0f0f;color:#fff;overflow:hidden;height:100vh;display:flex;flex-direction:column}
-.top-bar{background:linear-gradient(#222,#000);display:flex;justify-content:space-between;align-items:center;padding:5px 10px;border-bottom:3px solid yellow}
-.price-big{font-size:68px;color:#00ff00;font-weight:900;letter-spacing:2px;text-shadow:0 0 10px #00ff00}
-.price-da{font-size:32px;color:#00ff00;margin-right:15px}
-.red-bar{background:#d40000;display:flex;align-items:center;gap:8px;padding:6px}
-.red-bar input{padding:8px;border:none;border-radius:4px;width:120px}
-.red-bar .code-input{flex:1;background:#fffbe6}
-.main{display:flex;flex:1;overflow:hidden}
-.left{width:38%;background:#1a1a1a;border-left:2px solid #333;display:flex;flex-direction:column}
-.table-header{background:#f0e0b0;color:#000;padding:4px;display:flex;justify-content:space-around;font-weight:bold;font-size:13px}
-.invoice{flex:1;overflow-y:auto;background:#2a2a2a}
-.invoice-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #444;font-size:13px}
-.invoice-row:nth-child(odd){background:#333}
-.middle{width:14%;background:#111;border-left:2px solid #333;overflow-y:auto;font-size:12px;color:#00d8ff;padding:4px}
-.right{width:48%;background:#000;padding:6px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;overflow-y:auto}
-.prod-btn{background:linear-gradient(#222,#111);border:2px solid #444;border-radius:6px;padding:4px;text-align:center;cursor:pointer;position:relative;height:95px}
-.prod-btn img{width:100%;height:55px;object-fit:cover;border-radius:4px}
-.prod-btn span{display:block;font-size:11px;margin-top:2px;color:#ffeb3b}
-.prod-btn .code{position:absolute;bottom:2px;left:2px;background:red;color:#fff;font-size:10px;padding:1px 4px}
-.prod-btn .pr{position:absolute;bottom:2px;right:2px;background:#000;color:#fff;font-size:10px;padding:1px 3px}
-.bottom-bar{background:#c00;display:flex;justify-content:space-around;padding:8px;font-size:13px}
-button{cursor:pointer}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,Arial}
+body{background:#0a0a0a;color:#fff;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOP */
+.top{background:linear-gradient(#2a2a2a,#000);display:flex;justify-content:space-between;align-items:center;padding:2px 8px;border-bottom:3px solid #ffeb00;flex-wrap:wrap}
+.top-icons{display:flex;gap:6px;align-items:center}
+.icon-btn{width:38px;height:38px;background:#e8f6ff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.total-wrap{display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end}
+.total-price{font-size:clamp(28px,6vw,62px);color:#00ff18;font-weight:900;text-shadow:0 0 12px #00ff18;letter-spacing:1px}
+.total-da{font-size:clamp(16px,3vw,28px);color:#00ff18;font-weight:bold}
+
+/* RED BAR */
+.red{background:#c00000;display:flex;align-items:center;gap:5px;padding:5px 6px;flex-wrap:wrap;font-size:12px}
+.red input{padding:7px 6px;border:0;border-radius:3px;font-size:13px}
+.code-input{flex:1;min-width:140px;background:#fff9c4;font-weight:bold}
+.qte-input{width:50px;text-align:center}
+.prix-input{width:70px}
+
+/* MAIN */
+.main{flex:1;display:flex;overflow:hidden;min-height:0}
+.left{width:40%;background:#1e1e1e;display:flex;flex-direction:column;border-right:2px solid #333;min-width:0}
+.left-header{background:#ffeab0;color:#000;display:flex;font-size:11px;font-weight:bold;padding:4px}
+.left-header span{flex:1;text-align:center}
+.invoice{flex:1;overflow-y:auto;background:#2b2b2b;font-size:clamp(10px,1.5vw,13px)}
+.row{display:flex;padding:5px 3px;border-bottom:1px solid #444}
+.row div{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row:nth-child(odd){background:#333}
+.total-yellow{background:#ffeb00;color:#000;display:flex;justify-content:space-between;padding:5px 8px;font-weight:900;font-size:13px}
+
+.middle{width:14%;background:#0f0f0f;border-right:2px solid #222;overflow-y:auto;font-size:10px;color:#00d8ff;padding:3px;line-height:1.6}
+.middle b{color:#fff;font-size:11px}
+
+.right{width:46%;background:#000;padding:5px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;overflow-y:auto;align-content:start}
+.prod{background:linear-gradient(#2a2a2a,#101010);border:1px solid #333;border-radius:5px;cursor:pointer;position:relative;height:clamp(70px,12vw,95px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:3px;transition:0.1s}
+.prod:active{transform:scale(0.95);border-color:yellow}
+.prod img{width:100%;height:60%;object-fit:cover;border-radius:3px;background:#222}
+.prod .name{font-size:clamp(8px,1.2vw,11px);color:#ffeb3b;text-align:center;line-height:1.1;height:22px;overflow:hidden}
+.prod .c{position:absolute;bottom:1px;left:2px;background:red;color:#fff;font-size:8px;padding:1px 3px;border-radius:2px}
+.prod .p{position:absolute;bottom:1px;right:2px;background:rgba(0,0,0,0.8);color:#fff;font-size:8px;padding:1px 2px}
+
+/* BOTTOM */
+.bottom{background:#b00000;display:flex;align-items:center;justify-content:space-around;padding:5px 2px;font-size:clamp(8px,1.4vw,12px);flex-wrap:wrap;gap:2px}
+.b-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:2px 4px;border-radius:4px}
+.b-item:hover{background:rgba(255,255,255,0.15)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+.main{flex-direction:column}
+.left{width:100%;height:38%;order:1}
+.middle{display:none}
+.right{width:100%;height:42%;order:2;grid-template-columns:repeat(4,1fr)}
+.top{padding:4px}
+.red{font-size:11px}
+.bottom{order:3}
+}
+@media(min-width:769px) and (max-width:1100px){
+.right{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
-<div class="top-bar">
-<div style="display:flex;gap:10px"><div style="background:#00bcd4;padding:10px;border-radius:8px">🧾</div><div>📊 📈</div></div>
-<div style="display:flex;align-items:center"><div class="price-big" id="totalPrice">0,00</div><div class="price-da">DA</div></div>
+
+<div class="top">
+<div class="top-icons">
+<div class="icon-btn">📝</div>
+<div class="icon-btn">📊</div>
+<div class="icon-btn">👁️</div>
+<div class="icon-btn">⚖️</div>
+<div class="icon-btn">📄</div>
 </div>
-<div class="red-bar">
-<span>code :</span><input id="barcodeIn" class="code-input" placeholder="Scanner ici..." autofocus onkeydown="if(event.key==='Enter')addByCode(this.value)">
-<span>F12</span><span>Qte :</span><input id="qtyIn" type="number" value="1" style="width:60px">
-<span>Prix</span><input id="prixShow" readonly><span>Da</span>
-<span>Prix Col :</span><input readonly><span>Da</span>
+<div class="total-wrap">
+<span style="font-size:14px;opacity:0.8">DA</span>
+<div class="total-price" id="totalPrice">1220,00</div>
+<div style="display:flex;gap:4px"><div class="icon-btn" style="width:28px;height:28px;font-size:12px">📈</div><div class="icon-btn" style="width:28px;height:28px">📄</div></div>
 </div>
+</div>
+
+<div class="red">
+<span>code :</span><input id="codeIn" class="code-input" placeholder="...Scanner ici" autofocus>
+<span style="background:#ffb300;color:#000;padding:3px 6px;border-radius:50%">🖥️ F12</span>
+<span>Qte :</span><input id="qteIn" class="qte-input" value="1" type="number">
+<span>Prix</span><input id="prixIn" class="prix-input" readonly>
+<span>Da</span>
+<span>Prix Col Da :</span><input class="prix-input" style="width:90px" value="300" readonly>
+<span>Da</span>
+</div>
+
 <div class="main">
 <div class="left">
-<div class="table-header"><span>Article</span><span>Qte</span><span>Prix_Vt</span><span>Montant</span></div>
-<div class="invoice" id="invoiceList"></div>
-<div style="background:yellow;color:#000;display:flex;justify-content:space-between;padding:5px;font-weight:bold"><span>0 da</span><span id="totalSmall">0</span><span>da</span></div>
+<div class="left-header"><span style="flex:2">Article</span><span>Qte</span><span>Prix_Vt</span><span>Montant</span></div>
+<div class="invoice" id="inv"></div>
+<div class="total-yellow"><span>0 da</span><span id="tot2">1220</span><span>da</span></div>
 </div>
-<div class="middle" id="historyList">Liste des Bons<br>17:39:48<br>17:38:31<br>17:36:10<br>17:34:26<br>17:31:08<br>17:30:10<br>17:29:22<br>17:27:40<br>17:23:51<br>17:21:19<br>17:20:23<br>17:16:54<br>17:16:21<br>17:15:26<br>17:10:32</div>
-<div class="right" id="prodGrid"></div>
+<div class="middle" id="hist">
+<b>Liste des Bons</b><br>17:39:48<br>17:38:31<br>17:36:10<br>17:34:26<br>17:31:08<br>17:30:10<br>17:29:22<br>17:27:40<br>17:23:51<br>17:21:19<br>17:20:23<br>17:16:54<br>17:16:21<br>17:15:26<br>17:10:32
 </div>
-<div class="bottom-bar"><span>➕ Ajouter</span><span>🖨️ Imprimé</span><span>⬇️ Divers</span><span>↩️ Retour</span><span>PAGE 01</span><span>PAGE 02</span><span>PAGE 03</span><span>PAGE 04</span><span>PAIN OEUF</span><span>➕</span><span>➖</span><span>Remise %</span><span>Ouvrir T</span></div>
+<div class="right" id="grid"></div>
+</div>
+
+<div class="bottom">
+<div class="b-item"><span>📦</span>Ajouter</div>
+<div class="b-item"><span>🖨️</span>Imprimé</div>
+<div class="b-item"><span>⬇️</span>Divers</div>
+<div class="b-item"><span>↩️</span>Retour</div>
+<div class="b-item">PAGE 01</div>
+<div class="b-item">PAGE 02</div>
+<div class="b-item">PAGE 03</div>
+<div class="b-item">PAGE 04</div>
+<div class="b-item">PAIN OEUF</div>
+<div class="b-item" style="background:#ffffff22;border-radius:50%;width:28px;height:28px;justify-content:center">➕</div>
+<div class="b-item" style="background:#ffffff22;border-radius:50%;width:28px;height:28px;justify-content:center">➖</div>
+<div class="b-item"><span>🏷️%</span>Remise</div>
+<div class="b-item"><span>🗄️</span>Ouvrir T</div>
+</div>
 
 <script>
-const products=[
-{name:'خبز سميد',code:'A4',price:20,img:'https://images.unsplash.com/photo-1549931319-a545dcf3d696?w=200'},
-{name:'خبز بريوش',code:'A3',price:20,img:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200'},
-{name:'بيض',code:'A2',price:20,img:'https://images.unsplash.com/photo-1482049016688-2d3e1b31122f?w=200'},
-{name:'خبز عادي',code:'A1',price:10,img:'https://images.unsplash.com/photo-1549931319-a545dcf3d696?w=200'},
-{name:'عدس أحمر ميزان 10 كلغ',code:'A8',price:220,img:''},
-{name:'حمص 12 ميزان 50 كلغ',code:'A7',price:440,img:''},
-{name:'تريدة ميزان 10 كلغ',code:'A6',price:140,img:''},
-{name:'أرز أبيض ميزان 10 كلغ',code:'A5',price:220,img:''},
-{name:'كاكاو أخضر ميزان 25 كلغ',code:'A12',price:480,img:''},
-{name:'فريك ميزان',code:'A11',price:300,img:''},
-{name:'عدس خشن ميزان 50 كلغ',code:'A10',price:220,img:''},
-{name:'أرز بسمتي ميزان 25 كلغ',code:'A9',price:220,img:''},
+const prods=[
+{code:'A4',name:'خبز سميد',price:20,img:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200'},
+{code:'A3',name:'خبز بريوش',price:20,img:'https://images.unsplash.com/photo-1549931319-a545dcf3d696?w=200'},
+{code:'A2',name:'بيض',price:20,img:'https://images.unsplash.com/photo-1482049016688-2d3e1b31122f?w=200'},
+{code:'A1',name:'خبز عادي',price:10,img:'https://images.unsplash.com/photo-1549931319-a545dcf3d696?w=200'},
+{code:'A8',name:'عدس أحمر 10كلغ',price:220,img:''},
+{code:'A7',name:'حمص 50كلغ',price:440,img:''},
+{code:'A6',name:'تريدة 10كلغ',price:140,img:''},
+{code:'A5',name:'أرز أبيض 10كلغ',price:220,img:''},
+{code:'A12',name:'كاكاو أخضر 25كلغ',price:480,img:''},
+{code:'A11',name:'فريك ميزان',price:300,img:''},
+{code:'A10',name:'عدس خشن 50كلغ',price:220,img:''},
+{code:'A9',name:'أرز بسمتي 25كلغ',price:220,img:''},
+{code:'A16',name:'حلوى ملوة MX 2.5كلغ',price:1200,img:''},
+{code:'A15',name:'لوبيا ميزان بيضاء 50كلغ',price:400,img:''},
+{code:'A14',name:'كاكاو أبيض ميزان 12.5كلغ',price:400,img:''},
+{code:'A13',name:'نشاء ميزان 10كلغ',price:300,img:''},
 ];
 let cart=[];
-let stock=JSON.parse(localStorage.getItem('hanout_stock')||'null')||products;
-
-function renderGrid(){
- prodGrid.innerHTML=stock.map(p=>`
-  <div class="prod-btn" onclick="addByCode('${p.code}')">
-    ${p.img?`<img src="${p.img}">`:`<div style="height:55px;background:#222;display:flex;align-items:center;justify-content:center">📦</div>`}
-    <span>${p.name}</span>
-    <div class="code">${p.code}</div>
-    <div class="pr">${p.price},00</div>
-  </div>
- `).join('');
+const grid=document.getElementById('grid');
+function drawGrid(){
+ grid.innerHTML=prods.map(p=>`
+  <div class="prod" onclick="add('${p.code}')">
+    ${p.img?`<img src="${p.img}" loading="lazy">`:`<div style="width:100%;height:60%;background:linear-gradient(#333,#111);display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>`}
+    <div class="name">${p.name}</div>
+    <div class="c">${p.code}</div>
+    <div class="p">${p.price},00</div>
+  </div>`).join('');
 }
-function addByCode(code){
- let prod=stock.find(s=>s.code===code || s.barcode===code);
- if(!prod){alert('ماكانش: '+code);return;}
- let q=parseInt(qtyIn.value)||1;
- let exist=cart.find(c=>c.code===prod.code);
- if(exist) exist.qty+=q; else cart.push({...prod,qty:q});
- renderInvoice();
- barcodeIn.value='';barcodeIn.focus();
+function add(code){
+ let pr=prods.find(x=>x.code===code);
+ if(!pr)return;
+ let q=parseInt(document.getElementById('qteIn').value)||1;
+ let ex=cart.find(c=>c.code===code);
+ if(ex)ex.qty+=q;else cart.push({...pr,qty:q});
+ render();
 }
-function renderInvoice(){
- let tot=0;
- invoiceList.innerHTML=cart.map(c=>{let m=c.price*c.qty;tot+=m;return `<div class="invoice-row"><span>${c.name}</span><span>${c.qty}</span><span>${c.price}</span><span>${m}</span></div>`}).join('');
- totalPrice.textContent=tot.toFixed(2).replace('.',',');
- totalSmall.textContent=tot;
- prixShow.value=cart.length?cart[cart.length-1].price:'';
+function render(){
+ let t=0;
+ document.getElementById('inv').innerHTML=cart.map(c=>{let m=c.price*c.qty;t+=m;return `<div class="row"><div style="flex:2;text-align:right;padding-right:4px">${c.name}</div><div>${c.qty}</div><div>${c.price}</div><div>${m}</div></div>`}).join('');
+ document.getElementById('totalPrice').textContent=t.toFixed(2).replace('.',',');
+ document.getElementById('tot2').textContent=t;
+ if(cart.length)document.getElementById('prixIn').value=cart[cart.length-1].price;
 }
-renderGrid();
+document.getElementById('codeIn').addEventListener('keydown',e=>{if(e.key==='Enter'){add(e.target.value.toUpperCase());e.target.value='';}});
+drawGrid();render();
 </script>
 </body>
 </html>
